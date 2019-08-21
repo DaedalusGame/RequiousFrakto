@@ -1,0 +1,80 @@
+
+// For those who want the bleeding edge
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+version = "0.1"
+group= "requious" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "Requious Frakto"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+minecraft {
+    version = "1.12.2-14.23.5.2781"
+    runDir = "run"
+    mappings = "snapshot_20171125"
+    replace "%VERSION%": "${project.version}"
+    useDepAts = true
+}
+
+jar {
+    manifest {
+        attributes 'FMLAT': 'requious_at.cfg'
+    }
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier "dev"
+}
+
+artifacts {
+    archives deobfJar
+}
+
+repositories {
+    maven { url 'http://dvs1.progwml6.com/files/maven' }
+    maven { url "http://blamejared.com/maven" }
+    maven { url "http://www.ryanliptak.com/maven/" }
+    maven { url "http://maven.amadornes.com/" }
+}
+
+dependencies {
+    deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.19.548"
+    deobfCompile "mezz.jei:jei_1.12.2:4.14.4.267"
+    compile files('libs/')
+}
+
+processResources
+{
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+idea { module { inheritOutputDirs = true } }

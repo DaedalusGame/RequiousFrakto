@@ -1,0 +1,16 @@
+[
+{
+  "modid": "Requious",
+  "name": "Requious Frakto",
+  "description": "Bits and bobs.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["BordListian"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

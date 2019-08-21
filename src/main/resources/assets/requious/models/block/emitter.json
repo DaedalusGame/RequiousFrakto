@@ -1,0 +1,116 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"textures": {
+		"0": "requious:blocks/emitter_tex",
+		"particle": "requious:blocks/emitter_tex"
+	},
+	"elements": [
+		{
+			"name": "Cube",
+			"from": [5, -1, 5],
+			"to": [11, 1, 11],
+			"faces": {
+				"north": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"east": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"south": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"west": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"up": {"uv": [10, 8, 16, 14], "texture": "#0"},
+				"down": {"uv": [10, 8, 16, 14], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Cube",
+			"from": [5, 3, 5],
+			"to": [11, 5, 11],
+			"faces": {
+				"north": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"east": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"south": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"west": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"up": {"uv": [10, 8, 16, 14], "texture": "#0"},
+				"down": {"uv": [10, 8, 16, 14], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Cube",
+			"from": [3, 4, 7],
+			"to": [5, 10, 9],
+			"rotation": {"angle": 45, "axis": "z", "origin": [5, 5, 8]},
+			"faces": {
+				"north": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"east": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"south": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"west": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"up": {"uv": [4, 4, 6, 6], "texture": "#0", "tintindex": 0},
+				"down": {"uv": [4, 4, 6, 6], "texture": "#0", "tintindex": 0}
+			}
+		},
+		{
+			"name": "Cube",
+			"from": [11, 4, 7],
+			"to": [13, 10, 9],
+			"rotation": {"angle": -45, "axis": "z", "origin": [11, 5, 8]},
+			"faces": {
+				"north": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"east": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"south": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"west": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"up": {"uv": [4, 4, 6, 6], "texture": "#0", "tintindex": 0},
+				"down": {"uv": [4, 4, 6, 6], "texture": "#0", "tintindex": 0}
+			}
+		},
+		{
+			"name": "Cube",
+			"from": [7, 3, 11.41421],
+			"to": [9, 9, 13.41421],
+			"rotation": {"angle": 45, "axis": "x", "origin": [7, 5, 12.41421]},
+			"faces": {
+				"north": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"east": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"south": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"west": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"up": {"uv": [4, 4, 6, 6], "texture": "#0", "tintindex": 0},
+				"down": {"uv": [4, 4, 6, 6], "texture": "#0", "tintindex": 0}
+			}
+		},
+		{
+			"name": "Cube",
+			"from": [7, 3, 2.58579],
+			"to": [9, 9, 4.58579],
+			"rotation": {"angle": -45, "axis": "x", "origin": [8, 5, 3.58579]},
+			"faces": {
+				"north": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"east": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"south": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"west": {"uv": [4, 0, 6, 6], "texture": "#0", "tintindex": 0},
+				"up": {"uv": [4, 4, 6, 6], "texture": "#0", "tintindex": 0},
+				"down": {"uv": [4, 4, 6, 6], "texture": "#0", "tintindex": 0}
+			}
+		},
+		{
+			"name": "Cube",
+			"from": [7, 5, 7],
+			"to": [9, 11, 9],
+			"faces": {
+				"north": {"uv": [4, 0, 6, 6], "texture": "#0"},
+				"east": {"uv": [4, 0, 6, 6], "texture": "#0"},
+				"south": {"uv": [4, 0, 6, 6], "texture": "#0"},
+				"west": {"uv": [4, 0, 6, 6], "texture": "#0"},
+				"up": {"uv": [4, 4, 6, 6], "texture": "#0"},
+				"down": {"uv": [4, 4, 6, 6], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Cube",
+			"from": [6, 1, 6],
+			"to": [10, 3, 10],
+			"faces": {
+				"north": {"uv": [11, 14, 15, 16], "texture": "#0"},
+				"east": {"uv": [11, 14, 15, 16], "texture": "#0"},
+				"south": {"uv": [11, 14, 15, 16], "texture": "#0"},
+				"west": {"uv": [11, 14, 15, 16], "texture": "#0"}
+			}
+		}
+	]
+}

@@ -1,0 +1,47 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"textures": {
+		"0": "requious:blocks/emitter_tex",
+		"particle": "requious:blocks/emitter_tex"
+	},
+	"elements": [
+		{
+			"name": "Cube",
+			"from": [5, -1, 5],
+			"to": [11, 1, 11],
+			"faces": {
+				"north": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"east": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"south": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"west": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"up": {"uv": [10, 8, 16, 14], "texture": "#0"},
+				"down": {"uv": [10, 8, 16, 14], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Cube",
+			"from": [5, 3, 5],
+			"to": [11, 5, 11],
+			"faces": {
+				"north": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"east": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"south": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"west": {"uv": [10, 12, 16, 14], "texture": "#0"},
+				"up": {"uv": [10, 8, 16, 14], "texture": "#0"},
+				"down": {"uv": [10, 8, 16, 14], "texture": "#0"}
+			}
+		},
+		{
+			"name": "Cube",
+			"from": [6, 1, 6],
+			"to": [10, 3, 10],
+			"faces": {
+				"north": {"uv": [11, 14, 15, 16], "texture": "#0"},
+				"east": {"uv": [11, 14, 15, 16], "texture": "#0"},
+				"south": {"uv": [11, 14, 15, 16], "texture": "#0"},
+				"west": {"uv": [11, 14, 15, 16], "texture": "#0"}
+			}
+		}
+	]
+}
