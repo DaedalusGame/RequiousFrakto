@@ -6,18 +6,21 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import requious.Requious;
 import requious.data.AssemblyData;
 import requious.gui.GuiHandler;
 import requious.tile.TileEntityAssembly;
+import requious.util.Misc;
 import requious.util.PlaceType;
 
 import javax.annotation.Nullable;
@@ -28,9 +31,14 @@ public class BlockAssembly extends Block implements IDynamicModel {
 
     AssemblyData data;
 
+    AxisAlignedBB[] aabbs = new AxisAlignedBB[6];
+
     public BlockAssembly(Material materialIn, AssemblyData data) {
         super(materialIn);
         this.data = data;
+        for(EnumFacing facing : EnumFacing.VALUES) {
+            aabbs[facing.getIndex()] = Misc.rotateAABB(data.aabb,facing);
+        }
     }
 
     public AssemblyData getData() {
@@ -50,6 +58,22 @@ public class BlockAssembly extends Block implements IDynamicModel {
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(facing, EnumFacing.getFront(meta));
+    }
+
+    @Override
+    public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
+        return data.hardness;
+    }
+
+    @Override
+    public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
+        return data.blastResistance;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        EnumFacing facing = state.getValue(BlockAssembly.facing);
+        return aabbs[facing.getIndex()];
     }
 
     @Override
@@ -138,11 +162,6 @@ public class BlockAssembly extends Block implements IDynamicModel {
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return FULL_BLOCK_AABB;
-    }
-
-    @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         TileEntity tile = worldIn.getTileEntity(pos);
         if(tile instanceof TileEntityAssembly) {
@@ -179,12 +198,10 @@ public class BlockAssembly extends Block implements IDynamicModel {
     }
 
     @Override
-    public Color getMainTint() {
-        return data.colorA;
-    }
-
-    @Override
-    public Color getSecondaryTint() {
-        return data.colorB;
+    public Color getTint(int tintIndex) {
+        if(tintIndex >= 0 && tintIndex < data.colors.length)
+            return data.colors[tintIndex];
+        else
+            return Color.WHITE;
     }
 }

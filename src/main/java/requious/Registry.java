@@ -18,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -39,6 +40,7 @@ import requious.entity.spark.TargetTile;
 import requious.entity.spark.ValueFluid;
 import requious.entity.spark.ValueForgeEnergy;
 import requious.item.ItemTuningFork;
+import requious.util.AABBTypeAdapter;
 import requious.util.ColorTypeAdapter;
 import requious.util.LaserVisual;
 import requious.util.ResourceLocationTypeAdapter;
@@ -101,19 +103,19 @@ public class Registry {
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) {
         for (RedEmitterData data : RED_EMITTER_DATA) {
-            BlockRedEmitter emitter = (BlockRedEmitter) new BlockRedEmitter(Material.IRON,data).setRegistryName(Requious.MODID, data.resourceName).setUnlocalizedName(data.resourceName).setCreativeTab(CreativeTabs.REDSTONE).setHardness(5.0F).setResistance(10.0F);
+            BlockRedEmitter emitter = (BlockRedEmitter) new BlockRedEmitter(Material.IRON, data).setRegistryName(Requious.MODID, data.resourceName).setUnlocalizedName(data.resourceName).setCreativeTab(CreativeTabs.REDSTONE).setHardness(5.0F).setResistance(10.0F);
             event.getRegistry().register(emitter);
             RED_EMITTERS.add(emitter);
         }
 
         for (FluidEmitterData data : FLUID_EMITTER_DATA) {
-            BlockFluidEmitter emitter = (BlockFluidEmitter) new BlockFluidEmitter(Material.IRON,data).setRegistryName(Requious.MODID, data.resourceName).setUnlocalizedName(data.resourceName).setCreativeTab(CreativeTabs.REDSTONE).setHardness(5.0F).setResistance(10.0F);
+            BlockFluidEmitter emitter = (BlockFluidEmitter) new BlockFluidEmitter(Material.IRON, data).setRegistryName(Requious.MODID, data.resourceName).setUnlocalizedName(data.resourceName).setCreativeTab(CreativeTabs.REDSTONE).setHardness(5.0F).setResistance(10.0F);
             event.getRegistry().register(emitter);
             FLUID_EMITTERS.add(emitter);
         }
 
         for (AssemblyData data : ASSEMBLY_DATA) {
-            BlockAssembly assembly = (BlockAssembly) new BlockAssembly(Material.IRON,data).setRegistryName(Requious.MODID, data.resourceName).setUnlocalizedName(data.resourceName).setCreativeTab(CreativeTabs.REDSTONE).setHardness(5.0F).setResistance(10.0F);
+            BlockAssembly assembly = (BlockAssembly) new BlockAssembly(Material.IRON, data).setRegistryName(Requious.MODID, data.resourceName).setUnlocalizedName(data.resourceName).setCreativeTab(CreativeTabs.REDSTONE).setHardness(5.0F).setResistance(10.0F);
             event.getRegistry().register(assembly);
             data.setBlock(assembly);
         }
@@ -160,22 +162,14 @@ public class Registry {
 
     private static int colorMultiplierDynamic(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {
         IDynamicModel redirector = (IDynamicModel) state.getBlock();
-        if(tintIndex == 0)
-            return redirector.getMainTint().getRGB();
-        else if(tintIndex == 1)
-            return redirector.getSecondaryTint().getRGB();
-        else
-            return 0;
+        return redirector.getTint(tintIndex).getRGB();
     }
 
     private static int colorMultiplierDynamicItem(ItemStack stack, int tintIndex) {
         ItemBlock itemBlock = (ItemBlock) stack.getItem();
         Block block = itemBlock.getBlock();
-        if(block instanceof IDynamicModel) {
-            if(tintIndex == 0)
-                return ((IDynamicModel) block).getMainTint().getRGB();
-            else if(tintIndex == 1)
-                return ((IDynamicModel) block).getSecondaryTint().getRGB();
+        if (block instanceof IDynamicModel) {
+            return ((IDynamicModel) block).getTint(tintIndex).getRGB();
         }
         return -1;
     }
@@ -187,7 +181,13 @@ public class Registry {
     }
 
     public static void loadEmitterData(File file) {
-        Gson gson = new GsonBuilder().setLenient().setPrettyPrinting().registerTypeAdapter(Color.class, new ColorTypeAdapter()).registerTypeAdapter(ResourceLocation.class, new ResourceLocationTypeAdapter()).create();
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .setPrettyPrinting()
+                .registerTypeAdapter(Color.class, new ColorTypeAdapter())
+                .registerTypeAdapter(ResourceLocation.class, new ResourceLocationTypeAdapter())
+                .registerTypeAdapter(AxisAlignedBB.class, new AABBTypeAdapter())
+                .create();
 
         File configFolder = new File(file, Requious.MODID);
         if (!configFolder.exists()) {
@@ -233,13 +233,13 @@ public class Registry {
 
         RedEmitterData basic = new RedEmitterData();
         basic.resourceName = "red_emitter_basic";
-        basic.model = new ResourceLocation(Requious.MODID,"red_emitter");
+        basic.model = new ResourceLocation(Requious.MODID, "red_emitter");
         basic.capacity = 64;
         basic.interval = 40;
         list.add(basic);
         RedEmitterData advanced = new RedEmitterData();
         advanced.resourceName = "red_emitter_advanced";
-        advanced.model = new ResourceLocation(Requious.MODID,"red_emitter");
+        advanced.model = new ResourceLocation(Requious.MODID, "red_emitter");
         advanced.capacity = 128;
         advanced.interval = 20;
         list.add(advanced);
@@ -252,13 +252,13 @@ public class Registry {
 
         FluidEmitterData liquidOnly = new FluidEmitterData();
         liquidOnly.resourceName = "liquid_emitter";
-        liquidOnly.model = new ResourceLocation(Requious.MODID,"fluid_emitter");
+        liquidOnly.model = new ResourceLocation(Requious.MODID, "fluid_emitter");
         liquidOnly.capacity = 1000;
         liquidOnly.interval = 40;
         list.add(liquidOnly);
         FluidEmitterData gasOnly = new FluidEmitterData();
         gasOnly.resourceName = "gas_emitter";
-        gasOnly.model = new ResourceLocation(Requious.MODID,"fluid_emitter");
+        gasOnly.model = new ResourceLocation(Requious.MODID, "fluid_emitter");
         gasOnly.capacity = 1000;
         gasOnly.interval = 40;
         list.add(gasOnly);
@@ -271,15 +271,15 @@ public class Registry {
 
         AssemblyData itemGate = new AssemblyData();
         itemGate.resourceName = "item_gate";
-        itemGate.model = new ResourceLocation(Requious.MODID,"assembly_block");
+        itemGate.model = new ResourceLocation(Requious.MODID, "assembly_block");
         list.add(itemGate);
         AssemblyData laser = new AssemblyData();
         laser.resourceName = "laser";
-        laser.model = new ResourceLocation(Requious.MODID,"assembly_laser");
+        laser.model = new ResourceLocation(Requious.MODID, "assembly_laser");
         list.add(laser);
         AssemblyData assembler = new AssemblyData();
         assembler.resourceName = "assembler";
-        assembler.model = new ResourceLocation(Requious.MODID,"assembly_slab");
+        assembler.model = new ResourceLocation(Requious.MODID, "assembly_slab");
         list.add(assembler);
 
         return list;
@@ -301,8 +301,8 @@ public class Registry {
         @Override
         protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
             IDynamicModel redirector = (IDynamicModel) state.getBlock();
-            Map<IProperty<?>,Comparable<?>> map = Maps.newLinkedHashMap(state.getProperties());
-            return new ModelResourceLocation(redirector.getRedirect(),this.getPropertyString(map));
+            Map<IProperty<?>, Comparable<?>> map = Maps.newLinkedHashMap(state.getProperties());
+            return new ModelResourceLocation(redirector.getRedirect(), this.getPropertyString(map));
         }
     }
 

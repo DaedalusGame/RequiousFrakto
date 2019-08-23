@@ -7,7 +7,5 @@ import java.awt.*;
 public interface IDynamicModel {
     ResourceLocation getRedirect();
 
-    Color getMainTint();
-
-    Color getSecondaryTint();
+    Color getTint(int tintIndex);
 }

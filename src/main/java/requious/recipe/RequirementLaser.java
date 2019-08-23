@@ -47,7 +47,7 @@ public class RequirementLaser extends RequirementBase {
     @Override
     public void fillContainer(ComponentBase.Slot slot, ConsumptionResult result, RecipeContainer container) {
         if(mark != null)
-            container.addInput(mark, (int) result.consumed);
+            container.addInput(mark, ((ComponentLaser.Slot)slot).getTotalEnergy());
     }
 
     @Override

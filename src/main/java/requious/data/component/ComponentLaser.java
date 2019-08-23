@@ -19,6 +19,7 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @ZenRegister
 @ZenClass("mods.requious.LaserSlot")
@@ -207,6 +208,10 @@ public class ComponentLaser extends ComponentBase {
 
         public int getEnergy(String type) {
             return energy.getOrDefault(type, 0);
+        }
+
+        public int getTotalEnergy() {
+            return energy.values().stream().mapToInt(x -> x).sum();
         }
 
         public int receive(String type, int i, boolean simulate) {

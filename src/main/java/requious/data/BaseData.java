@@ -1,7 +1,9 @@
 package requious.data;
 
 import com.google.gson.annotations.SerializedName;
+import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 
 import java.awt.*;
 
@@ -10,8 +12,12 @@ public abstract class BaseData {
     public String resourceName;
     @SerializedName("model")
     public ResourceLocation model;
-    @SerializedName("colorA")
-    public Color colorA = Color.WHITE;
-    @SerializedName("colorB")
-    public Color colorB = Color.WHITE;
+    @SerializedName("colors")
+    public Color[] colors = new Color[]{ Color.WHITE};
+    @SerializedName("hardness")
+    public float hardness = 5.0f;
+    @SerializedName("blastResistance")
+    public float blastResistance = 5.0f;
+    @SerializedName("aabb")
+    public AxisAlignedBB aabb = Block.FULL_BLOCK_AABB;
 }

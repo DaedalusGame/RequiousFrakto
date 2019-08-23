@@ -66,11 +66,10 @@ public class ComponentFluid extends ComponentBase {
 
     @ReturnsSelf
     @ZenMethod
-    public ComponentFluid allowBucket(boolean input, boolean output, boolean drops) {
+    public ComponentFluid allowBucket(boolean input, boolean output) {
         bucketAllowed = true;
         putAllowed = input;
         takeAllowed = output;
-        dropsOnBreak = drops;
         return this;
     }
 
@@ -111,7 +110,7 @@ public class ComponentFluid extends ComponentBase {
 
     @ReturnsSelf
     @ZenMethod
-    public ComponentFluid pushEnergy(int size) {
+    public ComponentFluid pushFluid(int size) {
         this.pushFluid = new IOParameters(size);
         return this;
     }
