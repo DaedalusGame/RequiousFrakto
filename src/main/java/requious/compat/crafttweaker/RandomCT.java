@@ -23,6 +23,16 @@ public class RandomCT {
     }
 
     @ZenMethod
+    public int seedInt(int seed, int max) {
+        return new Random(seed).nextInt(max);
+    }
+
+    @ZenMethod
+    public double seedDouble(int seed) {
+        return new Random(seed).nextDouble();
+    }
+
+    @ZenMethod
     public int nextInt(int max) {
         return random.nextInt(max);
     }

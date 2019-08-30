@@ -1,0 +1,9 @@
+{
+    "parent" : "item/generated",
+    "textures" : {
+        "layer0" : "requious:items/lapotron",
+        "layer1" : "requious:items/lapotron_shine",
+        "layer2" : "requious:items/lapotron_connector",
+        "layer3" : "requious:items/lapotron_gauge"
+    }
+}

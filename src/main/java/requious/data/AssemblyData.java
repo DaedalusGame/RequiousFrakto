@@ -13,7 +13,6 @@ import requious.compat.jei.slot.*;
 import requious.data.component.*;
 import requious.recipe.AssemblyRecipe;
 import requious.util.PlaceType;
-import requious.util.SlotVisual;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @ZenRegister
 @ZenClass("mods.requious.Assembly")

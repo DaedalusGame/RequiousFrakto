@@ -1,0 +1,8 @@
+{
+    "parent" : "item/generated",
+    "textures" : {
+        "layer0" : "requious:items/battery_medium_gauge",
+        "layer1" : "requious:items/battery_medium_connector",
+        "layer2" : "requious:items/battery_fill6"
+    }
+}

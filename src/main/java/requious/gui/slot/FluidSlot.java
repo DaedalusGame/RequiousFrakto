@@ -1,12 +1,16 @@
 package requious.gui.slot;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import requious.data.component.ComponentFluid;
 import requious.gui.GuiAssembly;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
     public FluidSlot(ComponentFluid.Slot binding, int xPosition, int yPosition) {
@@ -72,5 +76,19 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
     @Override
     public ItemStack decrStackSize(int amount) {
         return binding.getItem().extract(amount,false);
+    }
+
+    @Override
+    public List<String> getTooltip() {
+        List<String> tooltip = new ArrayList<>();
+        FluidStack fluid = binding.getContents();
+        int capacity = binding.getCapacity();
+
+        if(fluid == null)
+            tooltip.add(I18n.format("requious.fluid.empty"));
+        else
+            tooltip.add(I18n.format("requious.fluid",fluid.getLocalizedName(),fluid.amount,capacity));
+
+        return tooltip;
     }
 }

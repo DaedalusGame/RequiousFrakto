@@ -11,28 +11,33 @@ import requious.compat.crafttweaker.RecipeContainer;
 import requious.data.component.ComponentBase;
 import requious.data.component.ComponentBase.Collector;
 import requious.data.component.ComponentBase.Slot;
+import requious.data.component.ComponentEnergy;
 import requious.data.component.ComponentLaser;
 import requious.recipe.AssemblyRecipe;
 import requious.recipe.ConsumptionResult;
 import requious.tile.ILaserAcceptor;
+import requious.tile.TileEntityAssembly;
 import requious.util.ILaserStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class AssemblyProcessor implements ICapabilityProvider {
     AssemblyData data;
     Slot[][] slots = new Slot[9][5];
     List<Collector> collectors = new ArrayList<>();
-    boolean dirty;
+    TileEntity tile;
 
     public AssemblyProcessor(AssemblyData data) {
         this.data = data;
     }
 
     public EnumFacing getFacing() {
+        if(tile instanceof TileEntityAssembly)
+            return ((TileEntityAssembly) tile).getFacing();
         return EnumFacing.UP;
     }
 
@@ -65,6 +70,7 @@ public class AssemblyProcessor implements ICapabilityProvider {
     }
 
     public void setTile(TileEntity tile) {
+        this.tile = tile;
         for (Collector collector : collectors) {
             collector.setTile(tile);
         }
@@ -174,6 +180,14 @@ public class AssemblyProcessor implements ICapabilityProvider {
         for (Collector collector : collectors) {
             if(collector instanceof ComponentLaser.Collector && ((ComponentLaser.Collector)collector).getFace().matches(facing))
                 return (ILaserStorage) collector;
+        }
+        return null;
+    }
+
+    public ComponentEnergy.CollectorIC2 getIC2Handler() {
+        for (Collector collector : collectors) {
+            if(collector instanceof ComponentEnergy.CollectorIC2)
+                return (ComponentEnergy.CollectorIC2) collector;
         }
         return null;
     }

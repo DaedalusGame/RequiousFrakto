@@ -1,5 +1,6 @@
 package requious.tile;
 
+import ic2.api.energy.tile.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,9 +14,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.Optional;
 import requious.block.BlockAssembly;
 import requious.data.AssemblyData;
 import requious.data.AssemblyProcessor;
+import requious.data.component.ComponentEnergy;
 import requious.recipe.AssemblyRecipe;
 import requious.util.ILaserStorage;
 import requious.util.Misc;
@@ -23,7 +26,8 @@ import requious.util.Misc;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class TileEntityAssembly extends TileEntity implements ITickable, ILaserAcceptor {
+@Optional.InterfaceList({@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "ic2"), @Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "ic2"), @Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "ic2")})
+public class TileEntityAssembly extends TileEntity implements ITickable, ILaserAcceptor, IEnergyTile, IEnergySink, IEnergySource {
     Random random = new Random();
     AssemblyProcessor processor;
     ResourceLocation block;
@@ -47,6 +51,8 @@ public class TileEntityAssembly extends TileEntity implements ITickable, ILaserA
     }
 
     public static EnumFacing toLocalSide(EnumFacing facing, EnumFacing side) {
+        if(side == null)
+            return null;
         switch (facing) {
             case DOWN:
                 return side.getOpposite();
@@ -66,6 +72,8 @@ public class TileEntityAssembly extends TileEntity implements ITickable, ILaserA
     }
 
     public static EnumFacing toGlobalSide(EnumFacing facing, EnumFacing side) {
+        if(side == null)
+            return null;
         switch (facing) {
             case DOWN:
                 return side.getOpposite();
@@ -191,5 +199,53 @@ public class TileEntityAssembly extends TileEntity implements ITickable, ILaserA
     @Override
     public BlockPos getPosition() {
         return getPos();
+    }
+
+    @Override
+    public boolean emitsEnergyTo(IEnergyAcceptor acceptor, EnumFacing side) {
+        ComponentEnergy.CollectorIC2 handler = processor.getIC2Handler();
+        return handler.canOutputEnergy(toLocalSide(getFacing(),side));
+    }
+
+    @Override
+    public double getDemandedEnergy() {
+        ComponentEnergy.CollectorIC2 handler = processor.getIC2Handler();
+        return handler.getInputEnergy();
+    }
+
+    @Override
+    public int getSinkTier() {
+        ComponentEnergy.CollectorIC2 handler = processor.getIC2Handler();
+        return handler.getInputTier();
+    }
+
+    @Override
+    public double injectEnergy(EnumFacing side, double amount, double voltage) {
+        ComponentEnergy.CollectorIC2 handler = processor.getIC2Handler();
+        return handler.inject(toLocalSide(getFacing(),side),amount,voltage);
+    }
+
+    @Override
+    public boolean acceptsEnergyFrom(IEnergyEmitter emitter, EnumFacing side) {
+        ComponentEnergy.CollectorIC2 handler = processor.getIC2Handler();
+        return handler.canInputEnergy(toLocalSide(getFacing(),side));
+    }
+
+    @Override
+    public double getOfferedEnergy() {
+        ComponentEnergy.CollectorIC2 handler = processor.getIC2Handler();
+        return handler.getOutputEnergy();
+    }
+
+    @Override
+    public void drawEnergy(double amount) {
+        ComponentEnergy.CollectorIC2 handler = processor.getIC2Handler();
+        handler.draw(amount);
+    }
+
+    @Override
+    public int getSourceTier() {
+        ComponentEnergy.CollectorIC2 handler = processor.getIC2Handler();
+        return handler.getOutputTier();
     }
 }

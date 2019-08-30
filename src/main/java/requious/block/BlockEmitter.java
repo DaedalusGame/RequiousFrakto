@@ -125,9 +125,6 @@ public abstract class BlockEmitter extends Block implements IDynamicModel {
 
     @Override
     public Color getTint(int tintIndex) {
-        if(tintIndex >= 0 && tintIndex < data.colors.length)
-            return data.colors[tintIndex];
-        else
-            return Color.WHITE;
+        return data.getColor(tintIndex);
     }
 }

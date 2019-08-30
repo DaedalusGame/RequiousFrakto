@@ -32,13 +32,14 @@ import requious.block.BlockAssembly;
 import requious.block.BlockFluidEmitter;
 import requious.block.BlockRedEmitter;
 import requious.block.IDynamicModel;
-import requious.data.AssemblyData;
-import requious.data.FluidEmitterData;
-import requious.data.RedEmitterData;
+import requious.data.*;
 import requious.entity.EntitySpark;
 import requious.entity.spark.TargetTile;
 import requious.entity.spark.ValueFluid;
 import requious.entity.spark.ValueForgeEnergy;
+import requious.item.IDynamicItemModel;
+import requious.item.ItemBattery;
+import requious.item.ItemFluidCell;
 import requious.item.ItemTuningFork;
 import requious.util.AABBTypeAdapter;
 import requious.util.ColorTypeAdapter;
@@ -61,6 +62,8 @@ public class Registry {
     public static List<RedEmitterData> RED_EMITTER_DATA = new ArrayList<>();
     public static List<FluidEmitterData> FLUID_EMITTER_DATA = new ArrayList<>();
     public static List<AssemblyData> ASSEMBLY_DATA = new ArrayList<>();
+    public static List<FluidCellData> FLUID_CELL_DATA = new ArrayList<>();
+    public static List<BatteryData> BATTERY_DATA = new ArrayList<>();
 
     public static List<BlockRedEmitter> RED_EMITTERS = new ArrayList<>();
     public static List<BlockFluidEmitter> FLUID_EMITTERS = new ArrayList<>();
@@ -70,6 +73,14 @@ public class Registry {
 
     public static AssemblyData getAssemblyData(String name) {
         return ASSEMBLY_DATA.stream().filter(data -> data.resourceName.equals(name)).findFirst().orElse(null);
+    }
+
+    public static BatteryData getBatteryData(String name) {
+        return BATTERY_DATA.stream().filter(data -> data.resourceName.equals(name)).findFirst().orElse(null);
+    }
+
+    public static FluidCellData getFluidCellData(String name) {
+        return FLUID_CELL_DATA.stream().filter(data -> data.resourceName.equals(name)).findFirst().orElse(null);
     }
 
     public static void init() {
@@ -86,16 +97,24 @@ public class Registry {
         BlockColors blockColors = Minecraft.getMinecraft().getBlockColors();
         ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
         for (BlockRedEmitter emitter : RED_EMITTERS) {
-            blockColors.registerBlockColorHandler(Registry::colorMultiplierDynamic, emitter);
-            itemColors.registerItemColorHandler(Registry::colorMultiplierDynamicItem, emitter);
+            blockColors.registerBlockColorHandler(Registry::colorMultiplierDynamicBlock, emitter);
+            itemColors.registerItemColorHandler(Registry::colorMultiplierDynamicItemBlock, emitter);
         }
         for (BlockFluidEmitter emitter : FLUID_EMITTERS) {
-            blockColors.registerBlockColorHandler(Registry::colorMultiplierDynamic, emitter);
-            itemColors.registerItemColorHandler(Registry::colorMultiplierDynamicItem, emitter);
+            blockColors.registerBlockColorHandler(Registry::colorMultiplierDynamicBlock, emitter);
+            itemColors.registerItemColorHandler(Registry::colorMultiplierDynamicItemBlock, emitter);
         }
         for (AssemblyData assembly : ASSEMBLY_DATA) {
             BlockAssembly emitter = assembly.getBlock();
-            blockColors.registerBlockColorHandler(Registry::colorMultiplierDynamic, emitter);
+            blockColors.registerBlockColorHandler(Registry::colorMultiplierDynamicBlock, emitter);
+            itemColors.registerItemColorHandler(Registry::colorMultiplierDynamicItemBlock, emitter);
+        }
+        for(FluidCellData cell : FLUID_CELL_DATA) {
+            ItemFluidCell emitter = cell.getItem();
+            itemColors.registerItemColorHandler(Registry::colorMultiplierDynamicItem, emitter);
+        }
+        for(BatteryData cell : BATTERY_DATA) {
+            ItemBattery emitter = cell.getItem();
             itemColors.registerItemColorHandler(Registry::colorMultiplierDynamicItem, emitter);
         }
     }
@@ -134,6 +153,17 @@ public class Registry {
             event.getRegistry().register(new ItemBlock(assembly).setRegistryName(assembly.getRegistryName()));
         }
 
+        for (FluidCellData data : FLUID_CELL_DATA) {
+            ItemFluidCell cell = (ItemFluidCell) new ItemFluidCell(data).setRegistryName(data.resourceName).setUnlocalizedName(data.resourceName).setCreativeTab(CreativeTabs.BREWING);
+            event.getRegistry().register(cell);
+            data.setItem(cell);
+        }
+        for (BatteryData data : BATTERY_DATA) {
+            ItemBattery cell = (ItemBattery) new ItemBattery(data).setRegistryName(data.resourceName).setUnlocalizedName(data.resourceName).setCreativeTab(CreativeTabs.REDSTONE);
+            event.getRegistry().register(cell);
+            data.setItem(cell);
+        }
+
         event.getRegistry().register(TUNING_FORK = new ItemTuningFork().setRegistryName(new ResourceLocation(Requious.MODID, "tuning_fork")).setUnlocalizedName("tuning_fork").setCreativeTab(CreativeTabs.REDSTONE));
     }
 
@@ -156,20 +186,37 @@ public class Registry {
 
             ModelLoader.setCustomStateMapper(assembly, new DynamicStateMapper());
         }
+        for(FluidCellData data : FLUID_CELL_DATA) {
+            ItemFluidCell cell = data.getItem();
+            ModelLoader.setCustomModelResourceLocation(cell, 0, new ModelResourceLocation(data.model, "inventory"));
+        }
+
+        for(BatteryData data : BATTERY_DATA) {
+            ItemBattery cell = data.getItem();
+            ModelLoader.setCustomModelResourceLocation(cell, 0, new ModelResourceLocation(data.model, "inventory"));
+        }
 
         registerItemModel(TUNING_FORK, 0, "inventory");
     }
 
-    private static int colorMultiplierDynamic(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {
+    private static int colorMultiplierDynamicBlock(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {
         IDynamicModel redirector = (IDynamicModel) state.getBlock();
         return redirector.getTint(tintIndex).getRGB();
     }
 
-    private static int colorMultiplierDynamicItem(ItemStack stack, int tintIndex) {
+    private static int colorMultiplierDynamicItemBlock(ItemStack stack, int tintIndex) {
         ItemBlock itemBlock = (ItemBlock) stack.getItem();
         Block block = itemBlock.getBlock();
         if (block instanceof IDynamicModel) {
             return ((IDynamicModel) block).getTint(tintIndex).getRGB();
+        }
+        return -1;
+    }
+
+    private static int colorMultiplierDynamicItem(ItemStack stack, int tintIndex) {
+        Item item = stack.getItem();
+        if (item instanceof IDynamicItemModel) {
+            return ((IDynamicItemModel) item).getTint(stack,tintIndex).getRGB();
         }
         return -1;
     }
@@ -197,6 +244,8 @@ public class Registry {
         readEmitterData(RedEmitterData.class, gson, new File(configFolder, "red_emitter.json"), Registry::addRedEmitter, Registry::getRedEmitterDefaults);
         readEmitterData(FluidEmitterData.class, gson, new File(configFolder, "fluid_emitter.json"), Registry::addFluidEmitter, Registry::getFluidEmitterDefaults);
         readEmitterData(AssemblyData.class, gson, new File(configFolder, "assembly.json"), Registry::addAssembly, Registry::getAssemblyDefaults);
+        readEmitterData(FluidCellData.class, gson, new File(configFolder, "fluid_cell.json"), Registry::addFluidCell, Registry::getFluidCellDefaults);
+        readEmitterData(BatteryData.class, gson, new File(configFolder, "battery.json"), Registry::addBattery, Registry::getBatteryDefaults);
     }
 
     private static <T> void readEmitterData(Class<T> type, Gson gson, File configJson, Consumer<T> consumer, Supplier<Iterable<T>> defaultData) {
@@ -285,16 +334,92 @@ public class Registry {
         return list;
     }
 
+    private static Iterable<FluidCellData> getFluidCellDefaults() {
+        List<FluidCellData> list = new ArrayList<>();
+
+        FluidCellData cell = new FluidCellData();
+        cell.resourceName = "cell";
+        cell.model = new ResourceLocation(Requious.MODID, "cell");
+        cell.colorsSerialized = new Color[] {new Color(255,255,255)};
+        cell.generateSubItems = true;
+        cell.capacity = 1000;
+        list.add(cell);
+
+        return list;
+    }
+
+    private static Iterable<BatteryData> getBatteryDefaults() {
+        List<BatteryData> list = new ArrayList<>();
+
+        BatteryData cell = new BatteryData();
+        cell.resourceName = "battery_copper";
+        cell.model = new ResourceLocation(Requious.MODID, "battery_small");
+        cell.colorsSerialized = new Color[] {new Color(220,64,16), new Color(255,192,64)};
+        cell.capacity = 1000;
+        list.add(cell);
+        cell = new BatteryData();
+        cell.resourceName = "battery_iron";
+        cell.model = new ResourceLocation(Requious.MODID, "battery_medium_fill0");
+        cell.colorsSerialized = new Color[] {new Color(255,255,255), new Color(255,192,64), new Color(255,0,0)};
+        cell.capacity = 2000;
+        list.add(cell);
+        cell = new BatteryData();
+        cell.resourceName = "energy_gem";
+        cell.model = new ResourceLocation(Requious.MODID, "energy_diamond");
+        cell.colorsSerialized = new Color[] {new Color(255,0,0), new Color(255,192,192)};
+        cell.capacity = 64000;
+        list.add(cell);
+        cell = new BatteryData();
+        cell.resourceName = "lapotron";
+        cell.model = new ResourceLocation(Requious.MODID, "lapotron_diamond");
+        cell.colorsSerialized = new Color[] {new Color(0,0,255), new Color(192,192,255), new Color(255,255,255)};
+        cell.capacity = 256000;
+        list.add(cell);
+        cell = new BatteryData();
+        cell.resourceName = "lapotron_orb";
+        cell.model = new ResourceLocation(Requious.MODID, "containment_gem");
+        cell.colorsSerialized = new Color[] {new Color(255,255,255),new Color(0,0,255)};
+        cell.capacity = 256000*8;
+        list.add(cell);
+        cell = new BatteryData();
+        cell.resourceName = "quantron";
+        cell.model = new ResourceLocation(Requious.MODID, "lapotron_emerald");
+        cell.colorsSerialized = new Color[] {new Color(128,255,0), new Color(255,255,192), new Color(64,64,64)};
+        cell.capacity = 68000000;
+        list.add(cell);
+        cell = new BatteryData();
+        cell.resourceName = "positron_unit";
+        cell.model = new ResourceLocation(Requious.MODID, "containment_fill0");
+        cell.colorsSerialized = new Color[] {new Color(128,255,192), new Color(255,255,0)};
+        cell.capacity = 1000000000;
+        list.add(cell);
+
+        return list;
+    }
+
     private static void addRedEmitter(RedEmitterData data) {
         RED_EMITTER_DATA.add(data);
+        data.init();
     }
 
     private static void addFluidEmitter(FluidEmitterData data) {
         FLUID_EMITTER_DATA.add(data);
+        data.init();
     }
 
     private static void addAssembly(AssemblyData data) {
         ASSEMBLY_DATA.add(data);
+        data.init();
+    }
+
+    private static void addFluidCell(FluidCellData data) {
+        FLUID_CELL_DATA.add(data);
+        data.init();
+    }
+
+    private static void addBattery(BatteryData data) {
+        BATTERY_DATA.add(data);
+        data.init();
     }
 
     private static class DynamicStateMapper extends StateMapperBase {

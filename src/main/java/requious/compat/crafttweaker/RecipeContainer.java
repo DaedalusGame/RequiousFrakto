@@ -22,9 +22,11 @@ import java.util.Map;
 public class RecipeContainer {
     public Map<String,Object> inputs = new HashMap<>();
     public List<ResultBase> outputs = new ArrayList<>();
+    public RandomCT random;
     public boolean jei;
 
     public RecipeContainer() {
+        random = new RandomCT();
     }
 
     public RecipeContainer(boolean jei) {
@@ -45,6 +47,15 @@ public class RecipeContainer {
 
     public List<ResultBase> getResults() {
         return outputs;
+    }
+
+    public void reset() {
+        random.reset();
+    }
+
+    @ZenGetter("random")
+    public RandomCT getRandom() {
+        return random;
     }
 
     @ZenGetter("jei")
@@ -89,6 +100,16 @@ public class RecipeContainer {
     @ZenMethod
     public void addLaserOutput(String group, String type, int amount, LaserVisualCT visual, @Optional SlotVisualCT slotVisual) {
         outputs.add(new ResultLaser(group,type,amount,visual.get(),SlotVisualCT.unpack(slotVisual)));
+    }
+
+    @ZenMethod
+    public void addWorldOutput(String group, IWorldFunction function) {
+        outputs.add(new ResultWorld(group,function));
+    }
+
+    @ZenMethod
+    public void addJEIInfo(String group, String langKey, SlotVisualCT slotVisual) {
+        outputs.add(new ResultJEI(group,langKey,SlotVisualCT.unpack(slotVisual)));
     }
 
     @ZenMethod

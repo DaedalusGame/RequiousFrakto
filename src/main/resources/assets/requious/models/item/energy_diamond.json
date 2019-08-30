@@ -1,0 +1,7 @@
+{
+    "parent" : "item/generated",
+    "textures" : {
+        "layer0" : "requious:items/lapotron",
+        "layer1" : "requious:items/lapotron_shine"
+    }
+}

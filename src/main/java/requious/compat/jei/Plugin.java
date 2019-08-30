@@ -18,6 +18,7 @@ public class Plugin implements IModPlugin {
     public void registerIngredients(IModIngredientRegistration registry) {
         registry.register(IngredientTypes.ENERGY, new ArrayList<>(), new FakeIngredientHelper<>(), new EnergyRenderer());
         registry.register(IngredientTypes.LASER, new ArrayList<>(), new FakeIngredientHelper<>(), new LaserRenderer());
+        registry.register(IngredientTypes.INFO, new ArrayList<>(), new FakeIngredientHelper<>(), new JEIInfoRenderer());
     }
 
     @Override

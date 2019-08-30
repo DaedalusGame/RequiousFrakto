@@ -9,6 +9,8 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.world.World;
+import requious.compat.crafttweaker.IWorldFunction;
 import requious.compat.crafttweaker.RecipeContainer;
 import requious.compat.crafttweaker.SlotVisualCT;
 import requious.compat.jei.IngredientCollector;
@@ -22,6 +24,7 @@ import stanhebben.zenscript.annotations.ZenMethod;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 @ZenRegister
 @ZenClass("mods.requious.AssemblyRecipe")
@@ -104,6 +107,30 @@ public class AssemblyRecipe implements IRecipeWrapper {
         requirements.add(new RequirementDuration(group, duration));
         return this;
     }
+
+    @ZenMethod
+    public AssemblyRecipe requireWorldCondition(String group, IWorldFunction function, int interval) {
+        requirements.add(new RequirementWorld(group, function, interval));
+        return this;
+    }
+
+    @ZenMethod
+    public AssemblyRecipe requireRandomChance(String group, double chance, int interval) {
+        requirements.add(new RequirementWorld(group, container -> doesRandomApply(container.tile.getWorld(),interval,chance), 0));
+        return this;
+    }
+
+    private boolean doesRandomApply(World world, int interval, double chance) {
+        long seed = hashCode() + world.getTotalWorldTime() % interval;
+        return new Random(seed).nextDouble() > chance;
+    }
+
+    @ZenMethod
+    public AssemblyRecipe addJEIInfo(String group, String langKey, SlotVisualCT slotVisual) {
+        requirements.add(new RequirementJEI(group,langKey,SlotVisualCT.unpack(slotVisual)));
+        return this;
+    }
+
 
     @ZenMethod
     public AssemblyRecipe setSubProcess(String processGroup) {

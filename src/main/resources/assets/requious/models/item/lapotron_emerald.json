@@ -1,0 +1,9 @@
+{
+    "parent" : "item/generated",
+    "textures" : {
+        "layer0" : "requious:items/gem",
+        "layer1" : "requious:items/gem_shine",
+        "layer2" : "requious:items/gem_connector",
+        "layer3" : "requious:items/gem_gauge"
+    }
+}

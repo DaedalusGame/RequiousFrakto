@@ -18,7 +18,7 @@ public class FluidColorHelper implements IResourceManagerReloadListener {
 
     public static int getColor(FluidStack stack) {
         if(stack == null)
-            return -1;
+            return 0;
         Fluid fluid = stack.getFluid();
         if(fluid == null)
             return -1;

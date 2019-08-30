@@ -10,3 +10,6 @@ requious.duration.seconds=%s seconds
 requious.duration.minutes=%s minutes
 requious.duration.hours=%s hours
 requious.duration.instant=Instant
+
+requious.fluid=%1$s %2$s/%3$s mB
+requious.fluid.empty=Empty

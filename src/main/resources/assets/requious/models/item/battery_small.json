@@ -1,0 +1,7 @@
+{
+    "parent" : "item/generated",
+    "textures" : {
+        "layer0" : "requious:items/battery_small",
+        "layer1" : "requious:items/battery_small_connector"
+    }
+}

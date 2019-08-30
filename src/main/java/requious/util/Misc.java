@@ -9,12 +9,12 @@ import net.minecraft.server.management.PlayerChunkMap;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
+import java.awt.*;
+import java.util.List;
 
 public class Misc {
     public static void syncTE(TileEntity tile, boolean broken) {
@@ -164,5 +164,50 @@ public class Misc {
         bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) zlevel).tex((double) ((float) (textureX + width) * 0.00390625F), (double) ((float) (textureY + 0) * 0.00390625F)).endVertex();
         bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) zlevel).tex((double) ((float) (textureX + 0) * 0.00390625F), (double) ((float) (textureY + 0) * 0.00390625F)).endVertex();
         tessellator.draw();
+    }
+
+    public static Color lerpColorRGB(List<Color> colors, double lerp) {
+        if(colors.size() <= 1)
+            throw new IllegalArgumentException("Needs atleast two colors.");
+        if(lerp >= 1)
+            return colors.get(colors.size()-1);
+        int index = MathHelper.clamp((int)(lerp * (colors.size()-1)), 0, colors.size() - 2);
+        return lerpColorRGB(colors.get(index),colors.get(index+1),lerp * (colors.size()-1) % 1);
+    }
+
+    public static Color lerpColorHSB(List<Color> colors, double lerp) {
+        if(colors.size() <= 1)
+            throw new IllegalArgumentException("Needs atleast two colors.");
+        if(lerp >= 1)
+            return colors.get(colors.size()-1);
+        int expectedIndex = (int) (lerp * (colors.size() - 1));
+        int index = MathHelper.clamp(expectedIndex, 0, colors.size() - 2);
+        return lerpColorHSB(colors.get(index),colors.get(index+1),lerp * (colors.size()-1) % 1);
+    }
+
+    static Color lerpColorRGB(Color colorA, Color colorB, double lerp) {
+        int r = (int)MathHelper.clampedLerp(colorA.getRed(),colorB.getRed(),lerp);
+        int g = (int)MathHelper.clampedLerp(colorA.getGreen(),colorB.getGreen(),lerp);
+        int b = (int)MathHelper.clampedLerp(colorA.getBlue(),colorB.getBlue(),lerp);
+        int a = (int)MathHelper.clampedLerp(colorA.getAlpha(),colorB.getAlpha(),lerp);
+        return new Color(r,g,b,a);
+    }
+
+    static Color lerpColorHSB(Color colorA, Color colorB, double lerp) {
+        float[] hsbA = Color.RGBtoHSB(colorA.getRed(),colorA.getGreen(),colorA.getBlue(),null);
+        float[] hsbB = Color.RGBtoHSB(colorB.getRed(),colorB.getGreen(),colorB.getBlue(),null);
+        float h = (float)MathHelper.clampedLerp(hsbA[0],hsbB[0],lerp);
+        float s = (float)MathHelper.clampedLerp(hsbA[1],hsbB[1],lerp);
+        float b = (float)MathHelper.clampedLerp(hsbA[2],hsbB[2],lerp);
+        int a = (int)MathHelper.clampedLerp(colorA.getAlpha(),colorB.getAlpha(),lerp);
+        Color hsbColor = Color.getHSBColor(h, s, b);
+        return new Color(hsbColor.getRed(),hsbColor.getGreen(),hsbColor.getBlue(),a);
+    }
+
+    public static Color parseColor(int[] rgb) {
+        Color color = Color.WHITE;
+        if (rgb != null && rgb.length >= 3 && rgb.length <= 4)
+            color = new Color(rgb[0], rgb[1], rgb[2], rgb.length == 4 ? rgb[3] : 255);
+        return color;
     }
 }

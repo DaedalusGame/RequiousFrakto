@@ -1,0 +1,7 @@
+{
+    "parent" : "item/generated",
+    "textures" : {
+        "layer0" : "requious:items/cell",
+        "layer1" : "requious:items/cell_fill"
+    }
+}

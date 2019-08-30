@@ -119,8 +119,8 @@ public class EnergySlot extends BaseSlot<ComponentEnergy.Slot> {
         List<String> tooltip = new ArrayList<>();
         String unit = binding.getUnit();
 
-        if(unit != null && I18n.hasKey("unit."+unit))
-            tooltip.add(I18n.format("unit."+unit,binding.getAmount(),binding.getCapacity()));
+        if(unit != null && I18n.hasKey("requious.unit."+unit))
+            tooltip.add(I18n.format("requious.unit."+unit,binding.getAmount(),binding.getCapacity()));
 
         return tooltip;
     }

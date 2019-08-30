@@ -1,0 +1,39 @@
+{
+    "parent" : "item/generated",
+    "textures" : {
+        "layer0" : "requious:items/battery_small_gauge",
+        "layer1" : "requious:items/battery_small_connector"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "requious:energy": 0.00001
+            },
+            "model": "requious:item/battery_small_fill1"
+        },
+        {
+            "predicate": {
+                "requious:energy": 0.3
+            },
+            "model": "requious:item/battery_small_fill2"
+        },
+        {
+            "predicate": {
+                "requious:energy": 0.6
+            },
+            "model": "requious:item/battery_small_fill3"
+        },
+        {
+            "predicate": {
+                "requious:energy": 0.9
+            },
+            "model": "requious:item/battery_small_fill4"
+        },
+        {
+            "predicate": {
+                "requious:energy": 1.0
+            },
+            "model": "requious:item/battery_small_fill5"
+        }
+    ]
+}

@@ -12,14 +12,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import requious.Requious;
-import requious.compat.jei.ingredient.Energy;
-import requious.compat.jei.ingredient.IngredientTypes;
-import requious.compat.jei.ingredient.Laser;
-import requious.compat.jei.ingredient.SuperStackRenderer;
-import requious.compat.jei.slot.EnergySlot;
-import requious.compat.jei.slot.FluidSlot;
-import requious.compat.jei.slot.ItemSlot;
-import requious.compat.jei.slot.LaserSlot;
+import requious.compat.jei.ingredient.*;
+import requious.compat.jei.slot.*;
 import requious.data.AssemblyData;
 import requious.recipe.AssemblyRecipe;
 
@@ -74,11 +68,13 @@ public class AssemblyCategory implements IRecipeCategory<AssemblyRecipe> {
         IGuiFluidStackGroup fluids = recipeLayout.getFluidStacks();
         IGuiIngredientGroup<Energy> energies = recipeLayout.getIngredientsGroup(IngredientTypes.ENERGY);
         IGuiIngredientGroup<Laser> lasers = recipeLayout.getIngredientsGroup(IngredientTypes.LASER);
+        IGuiIngredientGroup<JEIInfo> infos = recipeLayout.getIngredientsGroup(IngredientTypes.INFO);
 
         int i = 0;
         int e = 0;
         int g = 0;
         int l = 0;
+        int m = 0;
 
         recipeWrapper.generateJEI();
         for (JEISlot slot : recipeWrapper.jeiSlots) {
@@ -101,6 +97,11 @@ public class AssemblyCategory implements IRecipeCategory<AssemblyRecipe> {
                 lasers.init(l, slot.isInput(), slot.x * 18 + 1, slot.y * 18 + 1);
                 lasers.set(l, ((LaserSlot) slot).energies);
                 l++;
+            }
+            if(slot instanceof JEIInfoSlot) {
+                infos.init(m, slot.isInput(), slot.x * 18 + 1, slot.y * 18 + 1);
+                infos.set(m, ((JEIInfoSlot) slot).info);
+                m++;
             }
         }
     }

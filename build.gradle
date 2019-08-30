@@ -14,7 +14,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.1-hotfix"
+version = "0.2"
 group= "requious" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Requious Frakto"
 
@@ -45,15 +45,23 @@ artifacts {
 }
 
 repositories {
+    maven { url "https://minecraft.curseforge.com/api/maven" }
     maven { url 'http://dvs1.progwml6.com/files/maven' }
     maven { url "http://blamejared.com/maven" }
     maven { url "http://www.ryanliptak.com/maven/" }
     maven { url "http://maven.amadornes.com/" }
+    maven { url "http://maven.ic2.player.to/" }
+    maven { url "http://ae2.ae-mod.info/Downloads" }
 }
 
 dependencies {
     deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.19.548"
     deobfCompile "mezz.jei:jei_1.12.2:4.14.4.267"
+    deobfCompile "net.industrial-craft:industrialcraft-2:2.8.170-ex112:api"
+    deobfCompile "gregtechce:gregtech:1.12.2:1.8.4.419"
+    deobfCompile ("appeng:appliedenergistics2:rv6-stable-6"){
+        transitive = false
+    }
     compile files('libs/')
 }
 
