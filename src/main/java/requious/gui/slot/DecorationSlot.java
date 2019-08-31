@@ -72,4 +72,9 @@ public class DecorationSlot extends BaseSlot<ComponentDecoration.Slot> {
     public void renderForeground(GuiAssembly assembly, int x, int y, int mousex, int mousey) {
 
     }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }

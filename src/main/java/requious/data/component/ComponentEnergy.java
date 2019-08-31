@@ -20,6 +20,9 @@ import requious.gui.GaugeDirection;
 import requious.gui.slot.EnergySlot;
 import requious.tile.TileEntityAssembly;
 import requious.util.*;
+import requious.util.battery.BatteryAccessEmpty;
+import requious.util.battery.BatteryAccessFE;
+import requious.util.battery.IBatteryAccess;
 import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -174,38 +177,6 @@ public class ComponentEnergy extends ComponentBase {
         ItemComponentHelper battery;
         boolean active;
 
-        static IEnergyStorage fakeBattery = new IEnergyStorage() {
-            @Override
-            public int receiveEnergy(int maxReceive, boolean simulate) {
-                return 0;
-            }
-
-            @Override
-            public int extractEnergy(int maxExtract, boolean simulate) {
-                return 0;
-            }
-
-            @Override
-            public int getEnergyStored() {
-                return 0;
-            }
-
-            @Override
-            public int getMaxEnergyStored() {
-                return 0;
-            }
-
-            @Override
-            public boolean canExtract() {
-                return false;
-            }
-
-            @Override
-            public boolean canReceive() {
-                return false;
-            }
-        };
-
         public Slot(ComponentEnergy component) {
             super(component);
             battery = new ItemComponentHelper() {
@@ -309,7 +280,7 @@ public class ComponentEnergy extends ComponentBase {
         }
 
         public boolean canPut() {
-            return component.putAllowed;
+            return component.batteryAllowed && component.putAllowed;
         }
 
         public boolean canTake() {
@@ -323,23 +294,23 @@ public class ComponentEnergy extends ComponentBase {
         public int getCapacity() {
             if (canOverfill() && getAmount() <= 0)
                 return Integer.MAX_VALUE;
-            IEnergyStorage battery = getBatteryStorage();
+            IBatteryAccess battery = getBatteryStorage();
             return component.capacity + battery.getMaxEnergyStored();
         }
 
         public int getAmount() {
-            IEnergyStorage battery = getBatteryStorage();
+            IBatteryAccess battery = getBatteryStorage();
             return energy + battery.getEnergyStored();
         }
 
-        private IEnergyStorage getBatteryStorage() {
+        private IBatteryAccess getBatteryStorage() {
             if (component.batteryAllowed) {
                 ItemStack battery = getItem().getStack();
                 if (battery.hasCapability(CapabilityEnergy.ENERGY, null)) {
-                    return battery.getCapability(CapabilityEnergy.ENERGY, null);
+                    return new BatteryAccessFE(battery,battery.getCapability(CapabilityEnergy.ENERGY, null));
                 }
             }
-            return fakeBattery;
+            return BatteryAccessEmpty.INSTANCE;
         }
 
         public ResourceLocation getTexture() {
@@ -368,24 +339,26 @@ public class ComponentEnergy extends ComponentBase {
         }
 
         public int receive(int amount, boolean simulate) {
-            IEnergyStorage battery = getBatteryStorage();
+            IBatteryAccess batteryAccess = getBatteryStorage();
             int internalReceived = Math.min(amount, component.capacity - energy);
-            int batteryReceived = battery.receiveEnergy(Math.max(amount - internalReceived, 0), simulate);
+            int batteryReceived = batteryAccess.receiveEnergy(Math.max(amount - internalReceived, 0), simulate);
             if (!simulate) {
                 energy += internalReceived;
                 active = true;
+                battery.setStack(batteryAccess.getStack());
                 markDirty();
             }
             return internalReceived + batteryReceived;
         }
 
         public int extract(int amount, boolean simulate) {
-            IEnergyStorage battery = getBatteryStorage();
+            IBatteryAccess batteryAccess = getBatteryStorage();
             int internalExtracted = Math.min(amount, energy);
-            int batteryExtracted = battery.extractEnergy(Math.max(amount - internalExtracted, 0), simulate);
+            int batteryExtracted = batteryAccess.extractEnergy(Math.max(amount - internalExtracted, 0), simulate);
             if (!simulate) {
                 energy -= internalExtracted;
                 active = false;
+                battery.setStack(batteryAccess.getStack());
                 markDirty();
             }
             return internalExtracted + batteryExtracted;
@@ -616,7 +589,7 @@ public class ComponentEnergy extends ComponentBase {
         public int getEnergyStored() {
             int energy = 0;
             for (Slot slot : slots) {
-                energy += slot.energy;
+                energy += slot.getAmount();
             }
             return energy;
         }

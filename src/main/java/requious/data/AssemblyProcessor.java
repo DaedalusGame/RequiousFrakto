@@ -54,8 +54,7 @@ public class AssemblyProcessor implements ICapabilityProvider {
     private void addToCollector(Slot slot) {
         slot.addCollectors(collectors);
         for (Collector collector : collectors) {
-            if(collector.accept(slot))
-                return;
+            collector.accept(slot);
         }
     }
 
