@@ -9,6 +9,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import requious.Requious;
 import requious.data.component.ComponentEnergy;
 import requious.gui.GuiAssembly;
+import requious.util.SlotVisual;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -107,6 +108,9 @@ public class EnergySlot extends BaseSlot<ComponentEnergy.Slot> {
 
     @Override
     public void renderForeground(GuiAssembly assembly, int x, int y, int mousex, int mousey) {
+        SlotVisual visual = binding.getForeground();
+        if(visual != null)
+            visual.render(assembly.mc,x-1, y-1);
     }
 
     @Override

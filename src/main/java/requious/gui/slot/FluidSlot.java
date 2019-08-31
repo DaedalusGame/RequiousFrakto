@@ -7,6 +7,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import requious.data.component.ComponentFluid;
 import requious.gui.GuiAssembly;
+import requious.util.SlotVisual;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -70,7 +71,9 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
 
     @Override
     public void renderForeground(GuiAssembly assembly,int x, int y, int mousex, int mousey) {
-
+        SlotVisual visual = binding.getForeground();
+        if(visual != null)
+            visual.render(assembly.mc,x-1, y-1);
     }
 
     @Override

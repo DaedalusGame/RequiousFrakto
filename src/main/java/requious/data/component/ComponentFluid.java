@@ -15,12 +15,14 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import requious.compat.crafttweaker.SlotVisualCT;
 import requious.gui.slot.FluidSlot;
 import requious.recipe.ConsumptionResult;
 import requious.tile.TileEntityAssembly;
 import requious.util.ComponentFace;
 import requious.util.IOParameters;
 import requious.util.ItemComponentHelper;
+import requious.util.SlotVisual;
 import scala.Int;
 import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -45,6 +47,8 @@ public class ComponentFluid extends ComponentBase {
     public IOParameters pushFluid = new IOParameters();
     public IOParameters pushItem = new IOParameters();
     public int capacity;
+
+    public SlotVisual foreground = SlotVisual.EMPTY;
 
     public ComponentFluid(ComponentFace face, int capacity) {
         super(face);
@@ -112,6 +116,13 @@ public class ComponentFluid extends ComponentBase {
     @ZenMethod
     public ComponentFluid pushFluid(int size) {
         this.pushFluid = new IOParameters(size);
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentFluid setForeground(SlotVisualCT visual) {
+        this.foreground = SlotVisualCT.unpack(visual);
         return this;
     }
 
@@ -288,6 +299,10 @@ public class ComponentFluid extends ComponentBase {
         public void markClean() {
             super.markClean();
             bucket.markClean();
+        }
+
+        public SlotVisual getForeground() {
+            return component.foreground;
         }
     }
 

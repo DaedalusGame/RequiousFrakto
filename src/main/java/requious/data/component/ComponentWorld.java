@@ -18,8 +18,8 @@ import java.util.Map;
 @ZenRegister
 @ZenClass("mods.requious.WorldSlot")
 public class ComponentWorld extends ComponentBase {
-    public ComponentWorld(ComponentFace face) {
-        super(face);
+    public ComponentWorld() {
+        super(ComponentFace.None);
     }
 
     @Override

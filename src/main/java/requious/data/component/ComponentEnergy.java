@@ -15,6 +15,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import requious.Requious;
 import requious.compat.crafttweaker.GaugeDirectionCT;
+import requious.compat.crafttweaker.SlotVisualCT;
 import requious.gui.GaugeDirection;
 import requious.gui.slot.EnergySlot;
 import requious.tile.TileEntityAssembly;
@@ -43,8 +44,8 @@ public class ComponentEnergy extends ComponentBase {
     public int capacity;
     public float powerLoss;
 
-    public int maxInput;
-    public int maxOutput;
+    public int maxInput = Integer.MAX_VALUE;
+    public int maxOutput = 0;
 
     public boolean acceptsFE = true;
     public boolean acceptsEU = false;
@@ -55,6 +56,8 @@ public class ComponentEnergy extends ComponentBase {
     public int texX, texY;
     public GaugeDirection texDirection = GaugeDirection.UP;
     public String unit = "fe";
+
+    public SlotVisual foreground = SlotVisual.EMPTY;
 
     public ComponentEnergy(ComponentFace face, int capacity) {
         super(face);
@@ -129,6 +132,13 @@ public class ComponentEnergy extends ComponentBase {
         return this;
     }
 
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentEnergy setLimits(int input, int output) {
+        this.maxInput = input;
+        this.maxOutput = output;
+        return this;
+    }
 
     @ReturnsSelf
     @ZenMethod
@@ -148,6 +158,13 @@ public class ComponentEnergy extends ComponentBase {
     @ZenMethod
     public ComponentEnergy pushEnergy(int size) {
         this.pushEnergy = new IOParameters(size);
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentEnergy setForeground(SlotVisualCT visual) {
+        this.foreground = SlotVisualCT.unpack(visual);
         return this;
     }
 
@@ -397,6 +414,10 @@ public class ComponentEnergy extends ComponentBase {
         @Override
         public boolean canSplit() {
             return true;
+        }
+
+        public SlotVisual getForeground() {
+            return component.foreground;
         }
     }
 

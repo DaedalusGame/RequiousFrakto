@@ -13,6 +13,7 @@ import requious.gui.slot.AutomataSlot;
 import requious.util.ComponentFace;
 import requious.util.IOParameters;
 import requious.util.ItemComponentHelper;
+import requious.util.SlotVisual;
 import stanhebben.zenscript.annotations.ZenClass;
 
 import javax.annotation.Nonnull;
@@ -139,6 +140,14 @@ public class ComponentAutomata extends ComponentItem {
         @Override
         public boolean canSplit() {
             return component.splitAllowed;
+        }
+
+        public SlotVisual getBackground() {
+            return component.background;
+        }
+
+        public SlotVisual getForeground() {
+            return component.foreground;
         }
     }
 

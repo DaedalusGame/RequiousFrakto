@@ -11,11 +11,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import requious.compat.crafttweaker.SlotVisualCT;
 import requious.gui.slot.ItemSlot;
 import requious.tile.TileEntityAssembly;
 import requious.util.ComponentFace;
 import requious.util.IOParameters;
 import requious.util.ItemComponentHelper;
+import requious.util.SlotVisual;
 import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -37,6 +39,9 @@ public class ComponentItem extends ComponentBase {
     public boolean splitAllowed = false;
     public IOParameters pushItem = new IOParameters();
     public int capacity;
+
+    public SlotVisual background = SlotVisual.EMPTY;
+    public SlotVisual foreground = SlotVisual.EMPTY;
 
     public ComponentItem(ComponentFace face, int capacity) {
         super(face);
@@ -89,6 +94,20 @@ public class ComponentItem extends ComponentBase {
     @ZenMethod
     public ComponentItem pushItem(int size) {
         this.pushItem = new IOParameters(size);
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentItem setBackground(SlotVisualCT visual) {
+        this.background = SlotVisualCT.unpack(visual);
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentItem setForeground(SlotVisualCT visual) {
+        this.foreground = SlotVisualCT.unpack(visual);
         return this;
     }
 
@@ -186,6 +205,14 @@ public class ComponentItem extends ComponentBase {
         public void markClean() {
             super.markClean();
             item.markClean();
+        }
+
+        public SlotVisual getBackground() {
+            return component.background;
+        }
+
+        public SlotVisual getForeground() {
+            return component.foreground;
         }
     }
 

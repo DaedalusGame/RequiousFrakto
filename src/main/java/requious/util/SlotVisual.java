@@ -12,6 +12,8 @@ import java.util.List;
 public class SlotVisual {
     List<Part> parts = new ArrayList<>();
 
+    public static final SlotVisual EMPTY = new SlotVisual();
+
     public void addPart(ResourceLocation texture, int x, int y, Color color) {
         parts.add(new Part(texture, x, y, color));
     }

@@ -7,8 +7,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import requious.compat.crafttweaker.SlotVisualCT;
 import requious.gui.slot.SelectSlot;
 import requious.util.ComponentFace;
+import requious.util.SlotVisual;
+import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -22,6 +25,9 @@ public class ComponentSelection extends ComponentBase {
     String selectionGroup;
     Integer maxSelection;
 
+    public SlotVisual background = SlotVisual.EMPTY;
+    public SlotVisual foreground = SlotVisual.EMPTY;
+
     public ComponentSelection(String selectionGroup, int index) {
         super(ComponentFace.None);
         this.selectionGroup = selectionGroup;
@@ -31,6 +37,20 @@ public class ComponentSelection extends ComponentBase {
     @ZenMethod
     public ComponentSelection setMaxSelection(int max) {
         maxSelection = max;
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentSelection setBackground(SlotVisualCT visual) {
+        this.background = SlotVisualCT.unpack(visual);
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentSelection setForeground(SlotVisualCT visual) {
+        this.foreground = SlotVisualCT.unpack(visual);
         return this;
     }
 
@@ -135,6 +155,14 @@ public class ComponentSelection extends ComponentBase {
 
         public void addSelection(ItemStack icon) {
             selectionList.add(icon);
+        }
+
+        public SlotVisual getBackground() {
+            return component.background;
+        }
+
+        public SlotVisual getForeground() {
+            return component.foreground;
         }
     }
 
