@@ -1,8 +1,11 @@
 package requious.data;
 
+import com.google.common.collect.Lists;
 import com.google.gson.annotations.Expose;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.item.IItemStack;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import net.minecraft.item.ItemStack;
 import requious.Registry;
 import requious.block.BlockAssembly;
@@ -80,7 +83,7 @@ public class AssemblyData extends BaseData {
             min = Math.min(min,slot.x);
             max = Math.max(max,slot.x+1);
         }
-        return max;
+        return max - min;
     }
 
     public int getJEIHeight() {
@@ -90,7 +93,7 @@ public class AssemblyData extends BaseData {
             min = Math.min(min,slot.y);
             max = Math.max(max,slot.y+1);
         }
-        return max;
+        return max - min;
     }
 
     @ZenMethod
@@ -200,6 +203,11 @@ public class AssemblyData extends BaseData {
     }
 
     @ZenMethod
+    public void setJEIInfoSlot(int x, int y, String group) {
+        setJEISlot(new JEIInfoSlot(x,y,group));
+    }
+
+    @ZenMethod
     public void addJEIRecipe(AssemblyRecipe recipe) {
         if(recipe.hasJEICategory()) {
             CraftTweakerAPI.logError("Recipe already has a JEI category.");
@@ -210,15 +218,34 @@ public class AssemblyData extends BaseData {
     }
 
     @ZenMethod
-    public void addJEICatalyst(ItemStack catalyst) {
-        jeiCatalysts.add(catalyst);
+    public void addJEICatalyst(IItemStack catalyst) {
+        jeiCatalysts.add(CraftTweakerMC.getItemStack(catalyst));
     }
 
     public Iterable<ItemStack> getJEICatalysts() {
+        if(jeiCatalysts.isEmpty())
+            return Lists.newArrayList(new ItemStack(getBlock()));
         return jeiCatalysts;
     }
 
     public boolean hasJEIRecipes() {
         return !jeiRecipes.isEmpty();
+    }
+
+    public void compactJEI() {
+        int minX = Integer.MAX_VALUE;
+        int maxX = 0;
+        int minY = Integer.MAX_VALUE;
+        int maxY = 0;
+        for (JEISlot slot : jeiSlots) {
+            minX = Math.min(minX,slot.x);
+            maxX = Math.max(maxX,slot.x+1);
+            minY = Math.min(minY,slot.y);
+            maxY = Math.max(maxY,slot.y+1);
+        }
+        for (JEISlot slot : jeiSlots) {
+            slot.x -= minX;
+            slot.y -= minY;
+        }
     }
 }

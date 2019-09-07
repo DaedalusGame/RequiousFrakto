@@ -60,7 +60,7 @@ public class RequirementFluid extends RequirementBase {
             FluidSlot fluidSlot = (FluidSlot) slot;
             if(ingredient.getLiquids() != null) {
                 for (ILiquidStack fluid : ingredient.getLiquids()) {
-                    fluidSlot.fluids.add(CraftTweakerMC.getLiquidStack(fluid));
+                    fluidSlot.addFluid(CraftTweakerMC.getLiquidStack(fluid));
                 }
             } else {
                 //TODO: Mark wildcard

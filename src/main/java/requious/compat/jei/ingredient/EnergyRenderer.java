@@ -14,8 +14,8 @@ import java.util.List;
 
 public class EnergyRenderer extends FakeIngredientRenderer<Energy> {
     @Override
-    public void render(Minecraft minecraft, int xPosition, int yPosition, @Nullable IFakeIngredient ingredient) {
-        if(ingredient != null) {
+    public void render(Minecraft minecraft, int xPosition, int yPosition, @Nullable Energy ingredient) {
+        if(ingredient != null && ingredient.energy != 0) {
             GlStateManager.enableAlpha();
             minecraft.getTextureManager().bindTexture(new ResourceLocation(Requious.MODID, "textures/gui/assembly_slots.png"));
             Misc.drawTexturedModalRect(xPosition - 1, yPosition - 1, 0 * 18, 3 * 18, 18, 18);

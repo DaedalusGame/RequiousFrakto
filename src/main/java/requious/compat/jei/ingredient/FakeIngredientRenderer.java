@@ -10,7 +10,7 @@ import java.util.List;
 
 public class FakeIngredientRenderer<T extends IFakeIngredient> implements IIngredientRenderer<T> {
     @Override
-    public void render(Minecraft minecraft, int xPosition, int yPosition, @Nullable IFakeIngredient ingredient) {
+    public void render(Minecraft minecraft, int xPosition, int yPosition, @Nullable T ingredient) {
 
     }
 

@@ -260,24 +260,27 @@ public class ComponentFluid extends ComponentBase {
             return canOutput() && true;
         }
 
-        public int fill(FluidStack amount, boolean simulate) {
-            if (amount == null || (fluid != null && !fluid.isFluidEqual(amount))) {
+        public int fill(FluidStack resource, boolean simulate) {
+            if (resource == null || (fluid != null && !fluid.isFluidEqual(resource))) {
                 return 0;
             }
 
-            int toInsert = Math.min(amount.amount, getCapacity() - getAmount());
+            int amount = getAmount();
+            int toInsert = Math.min(resource.amount, getCapacity() - amount);
             if (!simulate) {
-                fluid.amount += toInsert;
+                if(fluid == null)
+                    fluid = resource.copy();
+                fluid.amount = amount + toInsert;
                 markDirty();
             }
             return toInsert;
         }
 
-        public FluidStack drain(FluidStack amount, boolean simulate) {
-            if (amount == null || (fluid != null && !fluid.isFluidEqual(amount))) {
+        public FluidStack drain(FluidStack resource, boolean simulate) {
+            if (resource == null || (fluid != null && !fluid.isFluidEqual(resource))) {
                 return null;
             }
-            return drain(amount.amount, simulate);
+            return drain(resource.amount, simulate);
         }
 
         public FluidStack drain(int amount, boolean simulate) {
@@ -285,6 +288,8 @@ public class ComponentFluid extends ComponentBase {
             copy.amount = Math.min(amount, getAmount());
             if (!simulate) {
                 fluid.amount -= copy.amount;
+                if(fluid.amount <= 0)
+                     fluid = null;
                 markDirty();
             }
             return copy;

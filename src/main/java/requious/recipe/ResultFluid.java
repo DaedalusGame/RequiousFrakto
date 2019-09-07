@@ -44,7 +44,7 @@ public class ResultFluid extends ResultBase {
     public boolean fillJEI(JEISlot slot) {
         if(slot instanceof FluidSlot && slot.group.equals(group) && !slot.isFilled()) {
             FluidSlot fluidSlot = (FluidSlot) slot;
-            fluidSlot.fluids.add(stack);
+            fluidSlot.addFluid(stack);
             return true;
         }
 

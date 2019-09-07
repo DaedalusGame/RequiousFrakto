@@ -25,8 +25,10 @@ public class Plugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registry) {
         IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
         for (AssemblyData assembly : Registry.ASSEMBLY_DATA) {
-            if(assembly.hasJEIRecipes())
-            registry.addRecipeCategories(new AssemblyCategory(assembly,guiHelper));
+            if(assembly.hasJEIRecipes()) {
+                assembly.compactJEI();
+                registry.addRecipeCategories(new AssemblyCategory(assembly, guiHelper));
+            }
         }
     }
 
@@ -38,7 +40,7 @@ public class Plugin implements IModPlugin {
         for (AssemblyData assembly : Registry.ASSEMBLY_DATA) {
             if(assembly.hasJEIRecipes()) {
                 reg.addRecipes(assembly.jeiRecipes, "requious." + assembly.resourceName);
-                reg.addRecipeCatalyst(new ItemStack(assembly.getBlock()), "requious." + assembly.resourceName);
+                //reg.addRecipeCatalyst(new ItemStack(assembly.getBlock()), "requious." + assembly.resourceName);
                 for (ItemStack catalyst : assembly.getJEICatalysts()) {
                     reg.addRecipeCatalyst(catalyst, "requious." + assembly.resourceName);
                 }

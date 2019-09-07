@@ -84,7 +84,7 @@ public class AssemblyCategory implements IRecipeCategory<AssemblyRecipe> {
                 i++;
             }
             if(slot instanceof FluidSlot) {
-                fluids.init(e, slot.isInput(), slot.x * 18 + 1, slot.y * 18 + 1, 16, 16, 16000, false, null);
+                fluids.init(e, slot.isInput(), slot.x * 18 + 1, slot.y * 18 + 1, 16, 16, ((FluidSlot) slot).normalizer.get(), false, null);
                 fluids.set(e, ((FluidSlot) slot).fluids);
                 e++;
             }

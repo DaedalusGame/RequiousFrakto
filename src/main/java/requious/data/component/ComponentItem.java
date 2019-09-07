@@ -18,6 +18,7 @@ import requious.util.ComponentFace;
 import requious.util.IOParameters;
 import requious.util.ItemComponentHelper;
 import requious.util.SlotVisual;
+import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -32,6 +33,7 @@ import java.util.List;
 public class ComponentItem extends ComponentBase {
     public boolean inputAllowed = true;
     public boolean outputAllowed = true;
+    public boolean shiftAllowed = true;
     public boolean putAllowed = true;
     public boolean takeAllowed = true;
     public boolean dropsOnBreak = true;
@@ -42,6 +44,7 @@ public class ComponentItem extends ComponentBase {
 
     public SlotVisual background = SlotVisual.EMPTY;
     public SlotVisual foreground = SlotVisual.EMPTY;
+
 
     public ComponentItem(ComponentFace face, int capacity) {
         super(face);
@@ -63,9 +66,10 @@ public class ComponentItem extends ComponentBase {
 
     @ReturnsSelf
     @ZenMethod
-    public ComponentItem setHandAccess(boolean input, boolean output) {
+    public ComponentItem setHandAccess(boolean input, boolean output, @Optional(valueBoolean = true) boolean shift) {
         putAllowed = input;
         takeAllowed = output;
+        shiftAllowed = shift;
         return this;
     }
 
@@ -194,6 +198,11 @@ public class ComponentItem extends ComponentBase {
 
         public boolean canSplit() {
             return component.splitAllowed;
+        }
+
+        @Override
+        public boolean canShift() {
+            return component.shiftAllowed;
         }
 
         @Override

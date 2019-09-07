@@ -63,6 +63,12 @@ public class ItemFluidCell extends Item implements IDynamicItemModel {
     }
 
     @Override
+    public int getItemBurnTime(ItemStack itemStack) {
+        FluidStack fluid = getFluid(itemStack);
+        return data.getFuelValue(fluid);
+    }
+
+    @Override
     public boolean getHasSubtypes() {
         return data.generateSubItems;
     }

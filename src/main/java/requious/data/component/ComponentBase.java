@@ -94,6 +94,10 @@ public abstract class ComponentBase {
         }
 
         public void markClean() { dirty = false; }
+
+        public boolean canShift() {
+            return false;
+        }
     }
 
     public static abstract class Collector implements ICapabilityProvider {

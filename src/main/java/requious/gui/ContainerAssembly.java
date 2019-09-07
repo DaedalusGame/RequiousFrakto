@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 
 public class ContainerAssembly extends Container {
     private AssemblyProcessor processor;
+    int machineSlots;
 
     public ContainerAssembly(EntityPlayer player, AssemblyProcessor processor) {
         this.processor = processor;
@@ -27,8 +28,10 @@ public class ContainerAssembly extends Container {
                 ComponentBase.Slot slot = processor.getSlot(x,y);
                 if(slot != null) {
                     Slot guiSlot = slot.createGui(8 + x * 18, 7 + y * 18);
-                    if (guiSlot != null)
+                    if (guiSlot != null) {
                         addSlotToContainer(guiSlot);
+                        machineSlots++;
+                    }
                 }
             }
         }
@@ -57,29 +60,34 @@ public class ContainerAssembly extends Container {
         return true;
     }
 
+    private static boolean canShiftClick(Slot slot) {
+        if(slot instanceof BaseSlot)
+            return ((BaseSlot) slot).canShift();
+        return true;
+    }
+
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index)
     {
         ItemStack stack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
-        int slots = this.inventorySlots.size();
+        int slots = machineSlots;
 
-        if(slot != null && slot.getHasStack())
+        if(slot != null && slot.getHasStack() && canShiftClick(slot))
         {
             ItemStack stack1 = slot.getStack();
             stack = stack1.copy();
 
-            if(index < slots)
-            {
+            if(index < slots) {
                 if(!mergeItemStack(stack1, slots, this.inventorySlots.size(), true))
                     return ItemStack.EMPTY;
-            }
-            else if(!mergeItemStack(stack1, 0, slots, false))
+            } else if(!mergeItemStack(stack1, 0, slots, false))
                 return ItemStack.EMPTY;
-            if(stack1.getCount() == 0)
-                slot.putStack(ItemStack.EMPTY);
-            else
+
+            slot.putStack(stack1);
+            if (!stack1.isEmpty()) {
                 slot.onSlotChanged();
+            }
         }
         return stack;
     }
@@ -501,7 +509,7 @@ public class ContainerAssembly extends Container {
                 Slot slot = this.inventorySlots.get(i);
                 ItemStack itemstack = slot.getStack();
 
-                if (!itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack))
+                if (slot.isItemValid(stack) && canShiftClick(slot) && !itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack))
                 {
                     int j = itemstack.getCount() + stack.getCount();
                     int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
@@ -510,6 +518,7 @@ public class ContainerAssembly extends Container {
                     {
                         stack.setCount(0);
                         itemstack.setCount(j);
+                        slot.putStack(itemstack);
                         slot.onSlotChanged();
                         flag = true;
                     }
@@ -517,6 +526,7 @@ public class ContainerAssembly extends Container {
                     {
                         stack.shrink(maxSize - itemstack.getCount());
                         itemstack.setCount(maxSize);
+                        slot.putStack(itemstack);
                         slot.onSlotChanged();
                         flag = true;
                     }
@@ -561,7 +571,7 @@ public class ContainerAssembly extends Container {
                 Slot slot1 = this.inventorySlots.get(i);
                 ItemStack itemstack1 = slot1.getStack();
 
-                if (itemstack1.isEmpty() && slot1.isItemValid(stack))
+                if (canShiftClick(slot1) && itemstack1.isEmpty() && slot1.isItemValid(stack))
                 {
                     if (stack.getCount() > slot1.getSlotStackLimit())
                     {

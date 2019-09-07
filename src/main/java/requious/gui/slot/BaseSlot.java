@@ -69,4 +69,8 @@ public abstract class BaseSlot<T extends ComponentBase.Slot> extends Slot {
     public boolean shouldRender() {
         return !binding.isHidden();
     }
+
+    public boolean canShift() {
+        return binding.canShift();
+    }
 }

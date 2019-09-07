@@ -23,6 +23,7 @@ import requious.util.*;
 import requious.util.battery.BatteryAccessEmpty;
 import requious.util.battery.BatteryAccessFE;
 import requious.util.battery.IBatteryAccess;
+import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -38,6 +39,7 @@ public class ComponentEnergy extends ComponentBase {
     public boolean batteryAllowed;
     public boolean inputAllowed = true;
     public boolean outputAllowed = true;
+    public boolean shiftAllowed = true;
     public boolean putAllowed = true;
     public boolean takeAllowed = true;
     public boolean dropsOnBreak = true;
@@ -82,11 +84,12 @@ public class ComponentEnergy extends ComponentBase {
 
     @ReturnsSelf
     @ZenMethod
-    public ComponentEnergy allowBattery(boolean input, boolean output, boolean drops) {
+    public ComponentEnergy allowBattery(boolean input, boolean output, @Optional(valueBoolean = true) boolean drops, @Optional(valueBoolean = true) boolean shift) {
         batteryAllowed = true;
         putAllowed = input;
         takeAllowed = output;
         dropsOnBreak = drops;
+        shiftAllowed = shift;
         return this;
     }
 
@@ -387,6 +390,11 @@ public class ComponentEnergy extends ComponentBase {
         @Override
         public boolean canSplit() {
             return true;
+        }
+
+        @Override
+        public boolean canShift() {
+            return component.shiftAllowed;
         }
 
         public SlotVisual getForeground() {

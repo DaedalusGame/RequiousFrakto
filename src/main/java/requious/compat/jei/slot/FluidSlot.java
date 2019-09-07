@@ -14,6 +14,7 @@ import java.util.List;
 
 public class FluidSlot extends JEISlot {
     public List<FluidStack> fluids = new ArrayList<>();
+    public FillNormalizer normalizer = new FillNormalizer();
 
     public FluidSlot(int x, int y, String group) {
         super(x, y, group);
@@ -30,9 +31,15 @@ public class FluidSlot extends JEISlot {
         fluids.clear();
     }
 
+    public void addFluid(FluidStack fluid) {
+        fluids.add(fluid);
+        normalizer.add(fluid.amount);
+    }
+
     @Override
     public JEISlot copy() {
         FluidSlot fluidSlot = new FluidSlot(x,y,group);
+        fluidSlot.normalizer = normalizer;
         return fluidSlot;
     }
 
@@ -50,5 +57,18 @@ public class FluidSlot extends JEISlot {
     public void render(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         minecraft.getTextureManager().bindTexture(new ResourceLocation(Requious.MODID,"textures/gui/assembly_slots.png"));
         Misc.drawTexturedModalRect(x*18,y*18, 18, 0, 18,18);
+    }
+
+    public static class FillNormalizer {
+        int highestFill;
+
+        public void add(int amount) {
+            if(amount > highestFill)
+                highestFill = amount;
+        }
+
+        public int get() {
+            return highestFill;
+        }
     }
 }
