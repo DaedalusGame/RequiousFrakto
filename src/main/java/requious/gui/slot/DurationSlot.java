@@ -69,8 +69,11 @@ public class DurationSlot extends BaseSlot<ComponentDuration.Slot> {
         assembly.drawTexturedModalRect(x-1, y-1, texX*18*2, texY*18, 18, 18);
         int energy = binding.getTime();
         int capacity = binding.getDuration();
+        boolean inverse = binding.isInverse();
         if(capacity > 0) {
             float ratio = (float) energy / capacity;
+            if(inverse)
+                ratio = 1 - ratio;
             int fill = (int) (ratio * 18);
             if (energy > 0 && fill <= 0)
                 fill = 1;

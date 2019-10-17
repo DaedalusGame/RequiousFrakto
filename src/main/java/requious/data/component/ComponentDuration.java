@@ -18,6 +18,7 @@ import requious.recipe.AssemblyRecipe;
 import requious.recipe.RequirementDuration;
 import requious.util.ComponentFace;
 import requious.util.ItemComponentHelper;
+import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -33,6 +34,7 @@ public class ComponentDuration extends ComponentBase {
     public ResourceLocation tex = new ResourceLocation(Requious.MODID, "textures/gui/assembly_gauges.png");
     public int texX, texY;
     public GaugeDirection texDirection;
+    public boolean texInverse;
 
     public ComponentDuration() {
         super(ComponentFace.None);
@@ -45,18 +47,19 @@ public class ComponentDuration extends ComponentBase {
 
     @ReturnsSelf
     @ZenMethod
-    public ComponentDuration setTexture(int x, int y, GaugeDirectionCT direction) {
+    public ComponentDuration setTexture(int x, int y, GaugeDirectionCT direction, @Optional boolean invert) {
         texX = x;
         texY = y;
         texDirection = direction.get();
+        texInverse = invert;
         return this;
     }
 
     @ReturnsSelf
     @ZenMethod
-    public ComponentDuration setTexture(String resource, int x, int y, GaugeDirectionCT direction) {
+    public ComponentDuration setTexture(String resource, int x, int y, GaugeDirectionCT direction, @Optional boolean invert) {
         tex = new ResourceLocation(resource);
-        setTexture(x,y,direction);
+        setTexture(x,y,direction,invert);
         return this;
     }
 
@@ -167,6 +170,10 @@ public class ComponentDuration extends ComponentBase {
 
         public boolean isDone() {
             return time >= duration;
+        }
+
+        public boolean isInverse() {
+            return component.texInverse;
         }
     }
 }

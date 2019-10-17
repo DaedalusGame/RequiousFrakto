@@ -134,7 +134,8 @@ public class ComponentWorld extends ComponentBase {
         }
 
         public boolean check(IWorldFunction worldCheck, String group, long interval) {
-
+            if(collector == null)
+                return false;
             TileEntity tile = getTile();
             if (tile == null || tile.getWorld() == null)
                 return false;
@@ -167,6 +168,10 @@ public class ComponentWorld extends ComponentBase {
 
         @Override
         public boolean accept(ComponentBase.Slot slot) {
+            if(slot instanceof Slot) {
+                ((Slot) slot).setCollector(this);
+                return true;
+            }
             return false;
         }
 

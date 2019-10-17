@@ -60,6 +60,7 @@ public class ComponentEnergy extends ComponentBase {
     public ResourceLocation tex = new ResourceLocation(Requious.MODID, "textures/gui/assembly_gauges.png");
     public int texX, texY;
     public GaugeDirection texDirection = GaugeDirection.UP;
+    public boolean texInverse;
     public String unit = "fe";
 
     public SlotVisual foreground = SlotVisual.EMPTY;
@@ -102,18 +103,19 @@ public class ComponentEnergy extends ComponentBase {
 
     @ReturnsSelf
     @ZenMethod
-    public ComponentEnergy setTexture(int x, int y, GaugeDirectionCT direction) {
+    public ComponentEnergy setTexture(int x, int y, GaugeDirectionCT direction, @Optional boolean invert) {
         texX = x;
         texY = y;
         texDirection = direction.get();
+        texInverse = invert;
         return this;
     }
 
     @ReturnsSelf
     @ZenMethod
-    public ComponentEnergy setTexture(String resource, int x, int y, GaugeDirectionCT direction) {
+    public ComponentEnergy setTexture(String resource, int x, int y, GaugeDirectionCT direction, @Optional boolean invert) {
         tex = new ResourceLocation(resource);
-        setTexture(x, y, direction);
+        setTexture(x,y,direction,invert);
         return this;
     }
 
@@ -399,6 +401,10 @@ public class ComponentEnergy extends ComponentBase {
 
         public SlotVisual getForeground() {
             return component.foreground;
+        }
+
+        public boolean isInverse() {
+            return component.texInverse;
         }
     }
 

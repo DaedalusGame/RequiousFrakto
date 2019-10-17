@@ -571,11 +571,11 @@ public class ContainerAssembly extends Container {
                 Slot slot1 = this.inventorySlots.get(i);
                 ItemStack itemstack1 = slot1.getStack();
 
-                if (canShiftClick(slot1) && itemstack1.isEmpty() && slot1.isItemValid(stack))
+                if (canShiftClick(slot1) && itemstack1.isEmpty() && slot1.isItemValid(stack) && slot1.getItemStackLimit(stack) > 0)
                 {
-                    if (stack.getCount() > slot1.getSlotStackLimit())
+                    if (stack.getCount() > slot1.getItemStackLimit(stack))
                     {
-                        slot1.putStack(stack.splitStack(slot1.getSlotStackLimit()));
+                        slot1.putStack(stack.splitStack(slot1.getItemStackLimit(stack)));
                     }
                     else
                     {

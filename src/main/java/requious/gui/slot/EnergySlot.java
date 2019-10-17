@@ -45,7 +45,7 @@ public class EnergySlot extends BaseSlot<ComponentEnergy.Slot> {
 
     @Override
     public int getSlotStackLimit() {
-        return binding.getCapacity();
+        return binding.getItem().getCapacity();
     }
 
     @Override
@@ -75,35 +75,40 @@ public class EnergySlot extends BaseSlot<ComponentEnergy.Slot> {
         assembly.drawTexturedModalRect(x-1, y-1, texX*18*2, texY*18, 18, 18);
         int energy = binding.getAmount();
         int capacity = binding.getCapacity();
-        float ratio = (float)energy / capacity;
-        int fill = (int)(ratio * 18);
-        if(binding.getAmount() > 0 && fill <= 0)
-            fill = 1;
-        int empty = 18 - fill;
+        boolean inverse = binding.isInverse();
+        if(capacity > 0) {
+            float ratio = (float) energy / capacity;
+            if (inverse)
+                ratio = 1 - ratio;
+            int fill = (int) (ratio * 18);
+            if (binding.getAmount() > 0 && fill <= 0)
+                fill = 1;
+            int empty = 18 - fill;
 
-        int ox = 0;
-        int oy = 0;
-        int ow = 18;
-        int oh = 18;
+            int ox = 0;
+            int oy = 0;
+            int ow = 18;
+            int oh = 18;
 
-        switch(binding.getTextureDirection()) {
-            case UP:
-                oy = empty;
-                oh = fill;
-                break;
-            case DOWN:
-                oh = fill;
-                break;
-            case LEFT:
-                ox = empty;
-                ow = fill;
-                break;
-            case RIGHT:
-                ow = fill;
-                break;
+            switch (binding.getTextureDirection()) {
+                case UP:
+                    oy = empty;
+                    oh = fill;
+                    break;
+                case DOWN:
+                    oh = fill;
+                    break;
+                case LEFT:
+                    ox = empty;
+                    ow = fill;
+                    break;
+                case RIGHT:
+                    ow = fill;
+                    break;
+            }
+
+            assembly.drawTexturedModalRect(x - 1 + ox, y - 1 + oy, texX * 18 * 2 + 18 + ox, texY * 18 + oy, ow, oh);
         }
-
-        assembly.drawTexturedModalRect(x-1+ox, y-1+oy, texX*18*2+18+ox, texY*18+oy, ow, oh);
     }
 
     @Override

@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -91,6 +95,14 @@ public class Registry {
 
         LaserVisual.register("beam", LaserVisual.Beam::new);
         LaserVisual.register("lightning", LaserVisual.Lightning::new);
+    }
+
+    @SubscribeEvent
+    public static void onUse(PlayerInteractEvent.RightClickItem event) {
+        EntityPlayer player = event.getEntityPlayer();
+        ItemStack stack = event.getItemStack();
+
+
     }
 
     public static void initColors() {
