@@ -146,13 +146,6 @@ public class AssemblyData extends BaseData {
     }
 
     @ZenMethod
-    public ComponentWorld setWorldSlot(int x, int y) {
-        ComponentWorld component = new ComponentWorld();
-        setSlot(x,y,component);
-        return component;
-    }
-
-    @ZenMethod
     public ComponentDecoration setDecorationSlot(int x, int y, SlotVisualCT visual) {
         ComponentDecoration component = new ComponentDecoration(SlotVisualCT.unpack(visual));
         setSlot(x,y,component);

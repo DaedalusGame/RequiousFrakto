@@ -2,6 +2,7 @@ package requious.recipe;
 
 import requious.compat.crafttweaker.RecipeContainer;
 import requious.compat.jei.JEISlot;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentBase;
 
 public abstract class RequirementBase {
@@ -11,6 +12,12 @@ public abstract class RequirementBase {
         this.group = group;
     }
 
+    //Machine global matching
+    public MatchResult matches(AssemblyProcessor assembly, ConsumptionResult result) {
+        return MatchResult.NOT_MATCHED;
+    }
+
+    //Slot local matching
     public abstract MatchResult matches(ComponentBase.Slot slot, ConsumptionResult result);
 
     public abstract void fillContainer(ComponentBase.Slot slot, ConsumptionResult result, RecipeContainer container);

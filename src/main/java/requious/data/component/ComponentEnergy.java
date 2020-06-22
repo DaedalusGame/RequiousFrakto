@@ -294,6 +294,10 @@ public class ComponentEnergy extends ComponentBase {
             return energy + battery.getEnergyStored();
         }
 
+        public void setAmount(int energy) {
+            this.energy = energy;
+        }
+
         private IBatteryAccess getBatteryStorage() {
             if (component.batteryAllowed) {
                 ItemStack battery = getItem().getStack();

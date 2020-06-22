@@ -2,11 +2,8 @@ package requious.recipe;
 
 import requious.compat.crafttweaker.IWorldFunction;
 import requious.compat.jei.JEISlot;
-import requious.compat.jei.ingredient.Energy;
-import requious.compat.jei.slot.EnergySlot;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentBase;
-import requious.data.component.ComponentEnergy;
-import requious.data.component.ComponentWorld;
 
 public class ResultWorld extends ResultBase {
     IWorldFunction worldCheck;
@@ -18,17 +15,17 @@ public class ResultWorld extends ResultBase {
 
     @Override
     public boolean matches(ComponentBase.Slot slot) {
-        if(slot instanceof ComponentWorld.Slot) {
-            ComponentWorld.Slot worldSlot = (ComponentWorld.Slot) slot;
-            if(worldSlot.run(worldCheck))
-                return true;
-        }
         return false;
     }
 
     @Override
     public void produce(ComponentBase.Slot slot) {
         //NOOP
+    }
+
+    @Override
+    public boolean matches(AssemblyProcessor assembly) {
+        return assembly.run(worldCheck);
     }
 
     @Override

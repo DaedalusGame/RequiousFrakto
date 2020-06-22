@@ -16,6 +16,7 @@ import requious.compat.crafttweaker.SlotVisualCT;
 import requious.compat.jei.IngredientCollector;
 import requious.compat.jei.JEISlot;
 import requious.data.AssemblyData;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentBase;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -138,25 +139,32 @@ public class AssemblyRecipe implements IRecipeWrapper {
         return this;
     }
 
-    public  List<ConsumptionResult> matches(List<ComponentBase.Slot> slots, RecipeContainer container) {
+    public  List<ConsumptionResult> matches(AssemblyProcessor assembly, RecipeContainer container) {
+        List<ComponentBase.Slot> slots = assembly.getSlots();
         List<ConsumptionResult> results = new ArrayList<>();
 
         for(RequirementBase requirement : requirements) {
             ConsumptionResult result = requirement.createResult();
             results.add(result);
             boolean matched = false;
-            for (int i = 0; i < slots.size(); i++) {
-                ComponentBase.Slot slot = slots.get(i);
-                MatchResult match = requirement.matches(slot, result);
-                if(match == MatchResult.MATCHED) {
-                    matched = true;
-                    result.setSlot(slot);
-                    requirement.fillContainer(slot, result, container);
-                    break;
-                } else if(match == MatchResult.CANCEL) {
-                    break;
+            MatchResult worldMatch = requirement.matches(assembly, result);
+            if(worldMatch == MatchResult.MATCHED)
+                matched = true;
+            if(worldMatch == MatchResult.CANCEL)
+                return null;
+            if(!matched)
+                for (int i = 0; i < slots.size(); i++) {
+                    ComponentBase.Slot slot = slots.get(i);
+                    MatchResult match = requirement.matches(slot, result);
+                    if(match == MatchResult.MATCHED) {
+                        matched = true;
+                        result.setSlot(slot);
+                        requirement.fillContainer(slot, result, container);
+                        break;
+                    } else if(match == MatchResult.CANCEL) {
+                        break;
+                    }
                 }
-            }
             if(!matched)
                 return null;
         }
@@ -164,17 +172,22 @@ public class AssemblyRecipe implements IRecipeWrapper {
         return results;
     }
 
-    public boolean fitsResults(List<ComponentBase.Slot> slots, RecipeContainer container) {
+    public boolean fitsResults(AssemblyProcessor assembly, RecipeContainer container) {
+        List<ComponentBase.Slot> slots = assembly.getSlots();
         HashSet<Integer> blockedSlots = new HashSet<>(); //You can't insert into the same slot twice, it's illegal.
         for(ResultBase result : container.getResults()) {
             boolean matched = false;
-            for (int i = 0; i < slots.size(); i++) {
-                ComponentBase.Slot slot = slots.get(i);
-                if(blockedSlots.contains(i) || !result.matches(slot))
-                    continue;
-                blockedSlots.add(i);
+            if(result.matches(assembly)) {
                 matched = true;
             }
+            if(!matched)
+                for (int i = 0; i < slots.size(); i++) {
+                    ComponentBase.Slot slot = slots.get(i);
+                    if(blockedSlots.contains(i) || !result.matches(slot))
+                        continue;
+                    blockedSlots.add(i);
+                    matched = true;
+                }
             if(!matched)
                 return false;
         }
@@ -187,8 +200,10 @@ public class AssemblyRecipe implements IRecipeWrapper {
         }
     }
 
-    public void produceResults(List<ComponentBase.Slot> slots, RecipeContainer container) {
+    public void produceResults(AssemblyProcessor assembly, RecipeContainer container) {
+        List<ComponentBase.Slot> slots = assembly.getSlots();
         for(ResultBase result : container.getResults()) {
+            result.produce(assembly);
             for (ComponentBase.Slot slot : slots) {
                 if (result.matches(slot)) {
                     result.produce(slot);

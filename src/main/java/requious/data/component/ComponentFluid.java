@@ -235,6 +235,10 @@ public class ComponentFluid extends ComponentBase {
             return fluid;
         }
 
+        public void setContents(FluidStack fluid) {
+            this.fluid = fluid;
+        }
+
         public int getAmount() {
             if (fluid == null)
                 return 0;

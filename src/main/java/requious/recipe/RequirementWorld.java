@@ -3,8 +3,8 @@ package requious.recipe;
 import requious.compat.crafttweaker.IWorldFunction;
 import requious.compat.crafttweaker.RecipeContainer;
 import requious.compat.jei.JEISlot;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentBase;
-import requious.data.component.ComponentWorld;
 
 public class RequirementWorld extends RequirementBase {
     IWorldFunction worldCheck;
@@ -17,14 +17,15 @@ public class RequirementWorld extends RequirementBase {
     }
 
     @Override
+    public MatchResult matches(AssemblyProcessor assembly, ConsumptionResult result) {
+        if (assembly.check(worldCheck, group, checkInterval))
+            return MatchResult.MATCHED;
+        else
+            return MatchResult.CANCEL;
+    }
+
+    @Override
     public MatchResult matches(ComponentBase.Slot slot, ConsumptionResult result) {
-        if(slot instanceof ComponentWorld.Slot) {
-            ComponentWorld.Slot worldSlot = (ComponentWorld.Slot) slot;
-            if(worldSlot.check(worldCheck,group,checkInterval))
-                return MatchResult.MATCHED;
-            else
-                return MatchResult.CANCEL;
-        }
         return MatchResult.NOT_MATCHED;
     }
 
