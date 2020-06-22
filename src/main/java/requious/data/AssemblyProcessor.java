@@ -115,6 +115,7 @@ public class AssemblyProcessor implements ICapabilityProvider {
                     if (recipe.fitsResults(slots, container)) {
                         recipe.consumeRequirements(results);
                         recipe.produceResults(slots, container);
+                        break;
                     }
                 }
             }

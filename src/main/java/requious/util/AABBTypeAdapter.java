@@ -24,31 +24,31 @@ public class AABBTypeAdapter extends TypeAdapter<AxisAlignedBB> {
     @Override
     public AxisAlignedBB read(JsonReader in) throws IOException {
         in.beginObject();
-        int x1 = 0;
-        int y1 = 0;
-        int z1 = 0;
-        int x2 = 1;
-        int y2 = 1;
-        int z2 = 1;
+        double x1 = 0;
+        double y1 = 0;
+        double z1 = 0;
+        double x2 = 1;
+        double y2 = 1;
+        double z2 = 1;
         while (in.hasNext()) {
             switch (in.nextName()) {
                 case ("x1"):
-                    x1 = in.nextInt();
+                    x1 = in.nextDouble();
                     break;
                 case ("y1"):
-                    y1 = in.nextInt();
+                    y1 = in.nextDouble();
                     break;
                 case ("z1"):
-                    z1 = in.nextInt();
+                    z1 = in.nextDouble();
                     break;
                 case ("x2"):
-                    x2 = in.nextInt();
+                    x2 = in.nextDouble();
                     break;
                 case ("y2"):
-                    y2 = in.nextInt();
+                    y2 = in.nextDouble();
                     break;
                 case ("z2"):
-                    z2 = in.nextInt();
+                    z2 = in.nextDouble();
                     break;
                 default:
                     in.skipValue();
