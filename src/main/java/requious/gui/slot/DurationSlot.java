@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import requious.Requious;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentDuration;
 import requious.data.component.ComponentEnergy;
 import requious.gui.GuiAssembly;
@@ -17,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DurationSlot extends BaseSlot<ComponentDuration.Slot> {
-    public DurationSlot(ComponentDuration.Slot binding, int xPosition, int yPosition) {
-        super(binding, xPosition, yPosition);
+    public DurationSlot(AssemblyProcessor assembly, ComponentDuration.Slot binding, int xPosition, int yPosition) {
+        super(assembly, binding, xPosition, yPosition);
     }
 
     @Override

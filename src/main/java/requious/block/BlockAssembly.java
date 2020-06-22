@@ -9,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -123,6 +124,16 @@ public class BlockAssembly extends Block implements IDynamicModel {
         }
 
         return getDefaultState().withProperty(facing, face);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
+
+        TileEntity tile = world.getTileEntity(pos);
+        if(tile instanceof TileEntityAssembly && placer instanceof EntityPlayer) {
+            ((TileEntityAssembly) tile).setOwner((EntityPlayer) placer);
+        }
     }
 
     @Override

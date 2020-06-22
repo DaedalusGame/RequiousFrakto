@@ -1,12 +1,15 @@
 package requious.data;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.FluidStack;
 import requious.compat.crafttweaker.IWorldFunction;
 import requious.compat.crafttweaker.MachineContainer;
 import requious.compat.crafttweaker.RecipeContainer;
@@ -35,9 +38,11 @@ public class AssemblyProcessor implements ICapabilityProvider {
     TileEntity tile;
     Map<String, CheckCache> cache = new HashMap<>();
     Map<String, Object> variables = new HashMap<>();
+    MachineContainer container;
 
     public AssemblyProcessor(AssemblyData data) {
         this.data = data;
+        container = new MachineContainer(this);
     }
 
     public TileEntity getTile() {
@@ -50,12 +55,19 @@ public class AssemblyProcessor implements ICapabilityProvider {
         return EnumFacing.UP;
     }
 
+    public void setOwner(EntityPlayer player) {
+        setVariable("owner", player.getName());
+        setVariable("ownerUUID", player.getGameProfile().getId());
+        tile.markDirty();
+    }
+
     public Object getVariable(String name) {
         return variables.get(name);
     }
 
     public void setVariable(String name, Object value) {
         variables.put(name,value);
+        tile.markDirty();
     }
 
     public boolean isCacheInvalid(String type, long time, long interval) {
@@ -78,7 +90,7 @@ public class AssemblyProcessor implements ICapabilityProvider {
             return false;
         long time = tile.getWorld().getTotalWorldTime();
         if (isCacheInvalid(group, time, interval)) {
-            boolean checkResult = worldCheck.run(new MachineContainer(this));
+            boolean checkResult = worldCheck.run(container);
             setCacheResult(group, checkResult, time);
             return checkResult;
         } else {
@@ -89,11 +101,79 @@ public class AssemblyProcessor implements ICapabilityProvider {
     public boolean run(IWorldFunction worldCheck) {
         if (tile == null || tile.getWorld() == null)
             return false;
-        return worldCheck.run(new MachineContainer(this));
+        return worldCheck.run(container);
     }
 
-    public NBTTagCompound serializeCache() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    private NBTBase serializeVariable(Object value) {
+        if(value instanceof Integer) {
+            return new NBTTagInt((int)value);
+        }
+        if(value instanceof Double) {
+            return new NBTTagDouble((double)value);
+        }
+        if(value instanceof String) {
+            return new NBTTagString((String)value);
+        }
+        if(value instanceof ItemStack) {
+            NBTTagCompound stackCompound = ((ItemStack) value).serializeNBT();
+            stackCompound.setString("CompoundType", "ItemStack");
+            return stackCompound;
+        }
+        if(value instanceof FluidStack) {
+            NBTTagCompound stackCompound = ((FluidStack) value).writeToNBT(new NBTTagCompound());
+            stackCompound.setString("CompoundType", "FluidStack");
+            return stackCompound;
+        }
+        return null;
+    }
+
+    private Object deserializeVariable(NBTBase nbt) {
+        if(nbt instanceof NBTTagInt) {
+            return ((NBTTagInt) nbt).getInt();
+        }
+        if(nbt instanceof NBTTagDouble) {
+            return ((NBTTagDouble) nbt).getDouble();
+        }
+        if(nbt instanceof NBTTagString) {
+            return ((NBTTagString) nbt).getString();
+        }
+        if(nbt instanceof NBTTagCompound) {
+            NBTTagCompound compound = (NBTTagCompound) nbt;
+            String type = compound.getString("CompoundType");
+
+            if(type.equals("ItemStack")) {
+                return new ItemStack(compound);
+            }
+            if(type.equals("FluidStack")) {
+                return FluidStack.loadFluidStackFromNBT(compound);
+            }
+        }
+        return null;
+    }
+
+    private NBTTagCompound serializeVariables() {
+        NBTTagCompound variableCompound = new NBTTagCompound();
+        for (Map.Entry<String, Object> entry : variables.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            NBTBase serialized = serializeVariable(value);
+            if(serialized != null)
+                variableCompound.setTag(key, serialized);
+        }
+        return variableCompound;
+    }
+
+    private void deserializeVariables(NBTTagCompound variableCompound) {
+        variables.clear();
+        for (String key : variableCompound.getKeySet()) {
+            NBTBase variableEntry = variableCompound.getTag(key);
+            Object deserialized = deserializeVariable(variableEntry);
+            if(deserialized != null)
+                variables.put(key, deserialized);
+        }
+    }
+
+    private NBTTagCompound serializeCache() {
         NBTTagCompound cacheCompound = new NBTTagCompound();
         for (Map.Entry<String, CheckCache> entry : cache.entrySet()) {
             NBTTagCompound cacheEntry = new NBTTagCompound();
@@ -102,15 +182,13 @@ public class AssemblyProcessor implements ICapabilityProvider {
             cacheEntry.setBoolean("result", cache.getResult());
             cacheCompound.setTag(entry.getKey(),cacheEntry);
         }
-        nbt.setTag("cache",cacheCompound);
-        return nbt;
+        return cacheCompound;
     }
 
-    private void deserializeCache(NBTTagCompound nbt) {
-        NBTTagCompound cacheCompound = nbt.getCompoundTag("cache");
+    private void deserializeCache(NBTTagCompound cacheCompound) {
         cache.clear();
         for (String key : cacheCompound.getKeySet()) {
-            NBTTagCompound cacheEntry = nbt.getCompoundTag(key);
+            NBTTagCompound cacheEntry = cacheCompound.getCompoundTag(key);
             cache.put(key,new CheckCache(cacheEntry.getBoolean("result"), cacheEntry.getLong("time")));
         }
     }
@@ -181,7 +259,7 @@ public class AssemblyProcessor implements ICapabilityProvider {
         }
         for(List<AssemblyRecipe> recipes : data.recipes.values()) {
             for (AssemblyRecipe recipe : recipes) {
-                RecipeContainer container = new RecipeContainer();
+                RecipeContainer container = new RecipeContainer(this.container);
                 List<ConsumptionResult> results = recipe.matches(this, container);
                 if (results != null) {
                     recipe.calculate(container);
@@ -214,6 +292,8 @@ public class AssemblyProcessor implements ICapabilityProvider {
                     compound.setTag(x+"_"+y, slot.serializeNBT());
             }
         }
+        compound.setTag("variables", serializeVariables());
+        compound.setTag("cache", serializeCache());
         return compound;
     }
 
@@ -225,6 +305,8 @@ public class AssemblyProcessor implements ICapabilityProvider {
                     slot.deserializeNBT(compound.getCompoundTag(x+"_"+y));
             }
         }
+        deserializeVariables(compound.getCompoundTag("variables"));
+        deserializeCache(compound.getCompoundTag("cache"));
     }
 
     @Override

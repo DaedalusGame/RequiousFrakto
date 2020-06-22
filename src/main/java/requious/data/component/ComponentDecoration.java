@@ -2,20 +2,15 @@ package requious.data.component;
 
 import crafttweaker.annotations.ZenRegister;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import requious.compat.crafttweaker.IWorldFunction;
-import requious.compat.crafttweaker.MachineContainer;
+import requious.data.AssemblyProcessor;
 import requious.gui.slot.DecorationSlot;
 import requious.util.ComponentFace;
 import requious.util.SlotVisual;
 import stanhebben.zenscript.annotations.ZenClass;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ZenRegister
 @ZenClass("mods.requious.DecorationSlot")
@@ -43,8 +38,8 @@ public class ComponentDecoration extends ComponentBase {
         }
 
         @Override
-        public net.minecraft.inventory.Slot createGui(int x, int y) {
-            return new DecorationSlot(this,x,y);
+        public net.minecraft.inventory.Slot createGui(AssemblyProcessor assembly, int x, int y) {
+            return new DecorationSlot(assembly,this,x,y);
         }
 
         @Override

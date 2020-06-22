@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
+import requious.data.AssemblyProcessor;
 import requious.tile.TileEntityAssembly;
 import requious.util.ComponentFace;
 import stanhebben.zenscript.annotations.ReturnsSelf;
@@ -68,7 +69,7 @@ public abstract class ComponentBase {
 
         public abstract void addCollectors(List<Collector> collectors);
 
-        public abstract net.minecraft.inventory.Slot createGui(int x, int y);
+        public abstract net.minecraft.inventory.Slot createGui(AssemblyProcessor assembly, int x, int y);
 
         public abstract void update();
 

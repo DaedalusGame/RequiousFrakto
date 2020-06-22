@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import requious.compat.crafttweaker.SlotVisualCT;
+import requious.data.AssemblyProcessor;
 import requious.gui.slot.SelectSlot;
 import requious.util.ComponentFace;
 import requious.util.SlotVisual;
@@ -75,8 +76,8 @@ public class ComponentSelection extends ComponentBase {
             }
         }
         @Override
-        public net.minecraft.inventory.Slot createGui(int x, int y) {
-            return new SelectSlot(this,x,y);
+        public net.minecraft.inventory.Slot createGui(AssemblyProcessor assembly, int x, int y) {
+            return new SelectSlot(assembly,this,x,y);
         }
 
         @Override

@@ -13,17 +13,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import requious.compat.crafttweaker.SlotVisualCT;
+import requious.data.AssemblyProcessor;
 import requious.gui.slot.FluidSlot;
-import requious.recipe.ConsumptionResult;
 import requious.tile.TileEntityAssembly;
 import requious.util.ComponentFace;
 import requious.util.IOParameters;
 import requious.util.ItemComponentHelper;
 import requious.util.SlotVisual;
-import scala.Int;
 import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -160,8 +157,8 @@ public class ComponentFluid extends ComponentBase {
         }
 
         @Override
-        public net.minecraft.inventory.Slot createGui(int x, int y) {
-            return new FluidSlot(this, x, y);
+        public net.minecraft.inventory.Slot createGui(AssemblyProcessor assembly, int x, int y) {
+            return new FluidSlot(assembly,this, x, y);
         }
 
         @Override
@@ -214,7 +211,7 @@ public class ComponentFluid extends ComponentBase {
         }
 
         public boolean canPut() {
-            return component.putAllowed;
+            return component.bucketAllowed && component.putAllowed;
         }
 
         public boolean canTake() {
@@ -223,6 +220,10 @@ public class ComponentFluid extends ComponentBase {
 
         public boolean canOverfill() {
             return component.canOverfill;
+        }
+
+        public boolean isBucketAccepted() {
+            return component.bucketAllowed;
         }
 
         public ItemComponentHelper getItem() {

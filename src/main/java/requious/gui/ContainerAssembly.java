@@ -27,7 +27,7 @@ public class ContainerAssembly extends Container {
             for (int y = 0; y < 5; y++) {
                 ComponentBase.Slot slot = processor.getSlot(x,y);
                 if(slot != null) {
-                    Slot guiSlot = slot.createGui(8 + x * 18, 7 + y * 18);
+                    Slot guiSlot = slot.createGui(processor,8 + x * 18, 7 + y * 18);
                     if (guiSlot != null) {
                         addSlotToContainer(guiSlot);
                         machineSlots++;

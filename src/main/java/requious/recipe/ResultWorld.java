@@ -8,8 +8,8 @@ import requious.data.component.ComponentBase;
 public class ResultWorld extends ResultBase {
     IWorldFunction worldCheck;
 
-    public ResultWorld(String group, IWorldFunction worldCheck) {
-        super(group);
+    public ResultWorld(IWorldFunction worldCheck) {
+        super("world");
         this.worldCheck = worldCheck;
     }
 

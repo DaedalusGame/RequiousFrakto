@@ -6,17 +6,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import requious.Requious;
-import requious.compat.crafttweaker.GaugeDirectionCT;
 import requious.compat.crafttweaker.SlotVisualCT;
-import requious.gui.GaugeDirection;
+import requious.data.AssemblyProcessor;
 import requious.gui.slot.EnergySlot;
 import requious.tile.TileEntityAssembly;
 import requious.util.*;
@@ -220,8 +217,8 @@ public class ComponentEnergy extends ComponentBase {
         }
 
         @Override
-        public net.minecraft.inventory.Slot createGui(int x, int y) {
-            return new EnergySlot(this, x, y);
+        public net.minecraft.inventory.Slot createGui(AssemblyProcessor assembly, int x, int y) {
+            return new EnergySlot(assembly,this, x, y);
         }
 
         @Override
@@ -280,6 +277,10 @@ public class ComponentEnergy extends ComponentBase {
 
         public boolean canOverfill() {
             return component.canOverfill;
+        }
+
+        public boolean isBatteryAccepted() {
+            return component.batteryAllowed;
         }
 
         public int getCapacity() {

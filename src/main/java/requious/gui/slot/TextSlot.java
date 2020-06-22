@@ -1,5 +1,6 @@
 package requious.gui.slot;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -16,8 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TextSlot extends BaseSlot<ComponentText.Slot> {
-    public TextSlot(ComponentText.Slot binding, int xPosition, int yPosition) {
-        super(binding, xPosition, yPosition);
+    public TextSlot(AssemblyProcessor assembly, ComponentText.Slot binding, int xPosition, int yPosition) {
+        super(assembly, binding, xPosition, yPosition);
     }
 
     @Override
@@ -70,14 +71,39 @@ public class TextSlot extends BaseSlot<ComponentText.Slot> {
     @Override
     public void renderBackground(GuiAssembly assembly, int x, int y, float partialTicks, int mousex, int mousey) {
         SlotVisual visual = binding.getVisual();
+
         if(visual != null)
-            visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
+            visual.render(assembly.mc,x-1, y-1, binding.getFill(this.assembly));
     }
 
     @Override
     public void renderForeground(GuiAssembly assembly, int x, int y, int mousex, int mousey) {
         SlotVisual visual = binding.getVisual();
+        ComponentText.TextPart renderText = binding.getRenderText();
+        if(renderText != null) {
+            int left = 0;
+            int right = 18 * visual.getWidth() - 2;
+            FontRenderer renderer = assembly.mc.fontRenderer;
+            String[] text = localize(renderText).split("\n");
+            for(int i = 0; i < text.length; i++) {
+                int width = renderer.getStringWidth(text[i]);
+                int height = renderer.FONT_HEIGHT;
+                int align = (right - left) - width;
+                switch(binding.getAlignment()) {
+                    case LEFT:
+                        align *= 0; //Left
+                        break;
+                    case CENTER:
+                        align /= 2; //Center
+                        break;
+                    case RIGHT:
+                        //NOOP //Right
+                        break;
+                }
 
+                renderer.drawString(text[i], x + left + align, y + i * height, 4210752);
+            }
+        }
     }
 
     @Override
@@ -89,12 +115,12 @@ public class TextSlot extends BaseSlot<ComponentText.Slot> {
     public List<String> getTooltip() {
         List<String> tooltip = new ArrayList<>();
         for(ComponentText.TextPart part : binding.getToolTip()) {
-
+            tooltip.add(localize(part));
         }
         return tooltip;
     }
 
-    private String localize(AssemblyProcessor assembly, ComponentText.TextPart part) {
+    private String localize(ComponentText.TextPart part) {
         String[] variableNames = part.getVariables();
         Object[] variableValues = new Object[variableNames.length];
         for(int i = 0; i < variableNames.length; i++) {
@@ -105,6 +131,6 @@ public class TextSlot extends BaseSlot<ComponentText.Slot> {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

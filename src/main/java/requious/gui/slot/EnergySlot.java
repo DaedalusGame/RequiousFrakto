@@ -1,12 +1,10 @@
 package requious.gui.slot;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.energy.CapabilityEnergy;
-import requious.Requious;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentEnergy;
 import requious.gui.GuiAssembly;
 import requious.util.Fill;
@@ -17,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnergySlot extends BaseSlot<ComponentEnergy.Slot> {
-    public EnergySlot(ComponentEnergy.Slot binding, int xPosition, int yPosition) {
-        super(binding, xPosition, yPosition);
+    public EnergySlot(AssemblyProcessor assembly, ComponentEnergy.Slot binding, int xPosition, int yPosition) {
+        super(assembly, binding, xPosition, yPosition);
     }
 
     @Override
@@ -104,5 +102,10 @@ public class EnergySlot extends BaseSlot<ComponentEnergy.Slot> {
     @Override
     public ItemStack decrStackSize(int amount) {
         return binding.getItem().extract(amount,false);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return binding.isBatteryAccepted() && (binding.canPut() || binding.canTake());
     }
 }

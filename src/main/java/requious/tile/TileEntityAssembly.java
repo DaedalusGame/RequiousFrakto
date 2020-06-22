@@ -3,6 +3,7 @@ package requious.tile;
 import ic2.api.energy.tile.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -32,6 +33,7 @@ public class TileEntityAssembly extends TileEntity implements ITickable, ILaserA
     AssemblyProcessor processor;
     ResourceLocation block;
     boolean shouldSync;
+    EntityPlayer owner;
 
     public void setBlock(BlockAssembly block) {
         this.block = block.getRegistryName();
@@ -178,11 +180,23 @@ public class TileEntityAssembly extends TileEntity implements ITickable, ILaserA
     private void initProcessor() {
         processor = getData().constructProcessor();
         processor.setTile(this);
+        if(owner != null)
+            processor.setOwner(owner);
     }
 
     public EnumFacing getFacing() {
         IBlockState state = getWorld().getBlockState(getPos());
         return state.getValue(BlockAssembly.facing);
+    }
+
+    public void setOwner(EntityPlayer player) {
+        if(player == null)
+            return;
+
+        if(processor != null)
+            processor.setOwner(player);
+        else
+            owner = player;
     }
 
     @Override

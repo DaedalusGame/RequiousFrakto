@@ -22,11 +22,11 @@ import java.util.Map;
 public class RecipeContainer {
     public Map<String,Object> inputs = new HashMap<>();
     public List<ResultBase> outputs = new ArrayList<>();
-    public RandomCT random;
+    public MachineContainer container;
     public boolean jei;
 
-    public RecipeContainer() {
-        random = new RandomCT();
+    public RecipeContainer(MachineContainer container) {
+        this.container = container;
     }
 
     public RecipeContainer(boolean jei) {
@@ -49,13 +49,14 @@ public class RecipeContainer {
         return outputs;
     }
 
-    public void reset() {
-        random.reset();
+    @ZenGetter("machine")
+    public MachineContainer getContainer() {
+        return container;
     }
 
     @ZenGetter("random")
     public RandomCT getRandom() {
-        return random;
+        return container.getRandom();
     }
 
     @ZenGetter("jei")
@@ -103,18 +104,13 @@ public class RecipeContainer {
     }
 
     @ZenMethod
-    public void addWorldOutput(String group, IWorldFunction function) {
-        outputs.add(new ResultWorld(group,function));
+    public void addWorldOutput(IWorldFunction function) {
+        outputs.add(new ResultWorld(function));
     }
 
     @ZenMethod
     public void addJEIInfo(String group, String langKey, SlotVisualCT slotVisual) {
         outputs.add(new ResultJEI(group,langKey,SlotVisualCT.unpack(slotVisual)));
-    }
-
-    @ZenMethod
-    public void stepAutomata(String group, IAutomataStep step) {
-        outputs.add(new ResultAutomata(group,step));
     }
 
     @ZenMethod

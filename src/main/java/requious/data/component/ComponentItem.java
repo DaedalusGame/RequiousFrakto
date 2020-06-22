@@ -12,6 +12,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import requious.compat.crafttweaker.SlotVisualCT;
+import requious.data.AssemblyProcessor;
 import requious.gui.slot.ItemSlot;
 import requious.tile.TileEntityAssembly;
 import requious.util.ComponentFace;
@@ -138,8 +139,8 @@ public class ComponentItem extends ComponentBase {
                 collectors.add(item);
         }
         @Override
-        public net.minecraft.inventory.Slot createGui(int x, int y) {
-            return new ItemSlot(this,x,y);
+        public net.minecraft.inventory.Slot createGui(AssemblyProcessor assembly, int x, int y) {
+            return new ItemSlot(assembly,this,x,y);
         }
 
         @Override

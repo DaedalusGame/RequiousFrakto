@@ -3,6 +3,7 @@ package requious.gui.slot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentSelection;
 import requious.gui.GuiAssembly;
 import requious.network.PacketHandler;
@@ -15,8 +16,8 @@ import javax.annotation.Nonnull;
 
 public class SelectSlot extends BaseSlot<ComponentSelection.Slot> {
 
-    public SelectSlot(ComponentSelection.Slot binding, int xPosition, int yPosition) {
-        super(binding, xPosition, yPosition);
+    public SelectSlot(AssemblyProcessor assembly, ComponentSelection.Slot binding, int xPosition, int yPosition) {
+        super(assembly, binding, xPosition, yPosition);
     }
 
     @Override

@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentFluid;
 import requious.gui.GuiAssembly;
 import requious.util.Fill;
@@ -21,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
-    public FluidSlot(ComponentFluid.Slot binding, int xPosition, int yPosition) {
-        super(binding, xPosition, yPosition);
+    public FluidSlot(AssemblyProcessor assembly, ComponentFluid.Slot binding, int xPosition, int yPosition) {
+        super(assembly, binding, xPosition, yPosition);
     }
 
     @Override
@@ -84,8 +85,8 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
 
     @Override
     public void renderForeground(GuiAssembly assembly,int x, int y, int mousex, int mousey) {
-
         SlotVisual foreground = binding.getForeground();
+        SlotVisual background = binding.getBackground();
         FluidStack contents = binding.getContents();
         if(contents != null) {
             assembly.mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -96,8 +97,8 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
             BufferBuilder bufferbuilder = tessellator.getBuffer();
             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
 
-            int widthSlot = 1;
-            int heightSlot = 1;
+            int widthSlot = background.getWidth();
+            int heightSlot = background.getHeight();
 
             int widthIn = 18 * widthSlot - 2;
             int heightIn = 18 * heightSlot - 2;
@@ -105,7 +106,7 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
             int zLevel = 100;
             double fill = (double) contents.amount / binding.getCapacity();
             double v = MathHelper.clampedLerp(textureSprite.getMinV(),textureSprite.getMaxV(),fill);
-            double heightLevel = MathHelper.clampedLerp(0,16, fill);
+            double heightLevel = MathHelper.clampedLerp(0,heightIn, fill);
 
             double xCoord = x;
             double yCoord = y + heightIn - heightLevel;
@@ -142,5 +143,10 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
             tooltip.add(I18n.format("requious.fluid",fluid.getLocalizedName(),fluid.amount,capacity));
 
         return tooltip;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return binding.isBucketAccepted() && (binding.canPut() || binding.canTake());
     }
 }

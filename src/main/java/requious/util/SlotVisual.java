@@ -13,10 +13,10 @@ import java.util.List;
 public class SlotVisual {
     List<Part> parts = new ArrayList<>();
 
-    public static ResourceLocation GUI_SLOTS = new ResourceLocation(Requious.MODID,"textures/gui/assembly_slots.png");
-    public static ResourceLocation GUI_GAUGES = new ResourceLocation(Requious.MODID,"textures/gui/assembly_gauges.png");
+    public static ResourceLocation GUI_SLOTS = new ResourceLocation(Requious.MODID, "textures/gui/assembly_slots.png");
+    public static ResourceLocation GUI_GAUGES = new ResourceLocation(Requious.MODID, "textures/gui/assembly_gauges.png");
 
-    public static final SlotVisual EMPTY = new SlotVisual();
+    public static final SlotVisual EMPTY = new SlotVisual(1, 1);
     public static final SlotVisual ITEM_SLOT;
     public static final SlotVisual FLUID_SLOT;
     public static final SlotVisual ENERGY_SLOT;
@@ -28,38 +28,53 @@ public class SlotVisual {
     public static final SlotVisual ARROW_UP;
 
     static {
-        ITEM_SLOT = new SlotVisual();
-        ITEM_SLOT.addPart(GUI_SLOTS,0,0, 1, 1, Color.WHITE);
-        FLUID_SLOT = new SlotVisual();
-        FLUID_SLOT.addPart(GUI_SLOTS,1,0, 1, 1, Color.WHITE);
-        ENERGY_SLOT = new SlotVisual();
-        ENERGY_SLOT.addGauge(GUI_GAUGES, 0, 0, 1, 1, Color.WHITE, GaugeDirection.UP, false);
-        INFO_SLOT = new SlotVisual();
-        INFO_SLOT.addPart(GUI_SLOTS,1,2, 1, 1, Color.WHITE);
-        SELECTION_SLOT = new SlotVisual();
-        SELECTION_SLOT.addPart(GUI_SLOTS,1,1, 1, 1, Color.WHITE);
+        ITEM_SLOT = new SlotVisual(1, 1);
+        ITEM_SLOT.addPart(GUI_SLOTS, 0, 0, Color.WHITE);
+        FLUID_SLOT = new SlotVisual(1, 1);
+        FLUID_SLOT.addPart(GUI_SLOTS, 1, 0, Color.WHITE);
+        ENERGY_SLOT = new SlotVisual(1, 1);
+        ENERGY_SLOT.addGauge(GUI_GAUGES, 0, 0, 1, 0, Color.WHITE, GaugeDirection.UP, false);
+        INFO_SLOT = new SlotVisual(1, 1);
+        INFO_SLOT.addPart(GUI_SLOTS, 1, 2, Color.WHITE);
+        SELECTION_SLOT = new SlotVisual(1, 1);
+        SELECTION_SLOT.addPart(GUI_SLOTS, 1, 1, Color.WHITE);
 
-        ARROW_RIGHT = new SlotVisual();
-        ARROW_RIGHT.addGauge(GUI_GAUGES, 0, 8, 1, 1, Color.WHITE, GaugeDirection.RIGHT, false);
-        ARROW_DOWN = new SlotVisual();
-        ARROW_DOWN.addGauge(GUI_GAUGES, 2, 8, 1, 1, Color.WHITE, GaugeDirection.DOWN, false);
-        ARROW_LEFT = new SlotVisual();
-        ARROW_LEFT.addGauge(GUI_GAUGES, 4, 8, 1, 1, Color.WHITE, GaugeDirection.LEFT, false);
-        ARROW_UP = new SlotVisual();
-        ARROW_UP.addGauge(GUI_GAUGES, 6, 8, 1, 1, Color.WHITE, GaugeDirection.UP, false);
+        ARROW_RIGHT = new SlotVisual(1, 1);
+        ARROW_RIGHT.addGauge(GUI_GAUGES, 0, 8, 1, 8, Color.WHITE, GaugeDirection.RIGHT, false);
+        ARROW_DOWN = new SlotVisual(1, 1);
+        ARROW_DOWN.addGauge(GUI_GAUGES, 2, 8, 3, 8, Color.WHITE, GaugeDirection.DOWN, false);
+        ARROW_LEFT = new SlotVisual(1, 1);
+        ARROW_LEFT.addGauge(GUI_GAUGES, 4, 8, 5, 8, Color.WHITE, GaugeDirection.LEFT, false);
+        ARROW_UP = new SlotVisual(1, 1);
+        ARROW_UP.addGauge(GUI_GAUGES, 6, 8, 7, 8, Color.WHITE, GaugeDirection.UP, false);
     }
 
-    public void addPart(ResourceLocation texture, int x, int y, int width, int height, Color color) {
+    int width, height;
+
+    public SlotVisual(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void addPart(ResourceLocation texture, int x, int y, Color color) {
         parts.add(new Part(texture, x, y, width, height, color));
     }
 
-    public void addDirectionalPart(ResourceLocation texture, int x, int y, int width, int height, Color color, GaugeDirection direction, boolean inverse) {
+    public void addDirectionalPart(ResourceLocation texture, int x, int y, Color color, GaugeDirection direction, boolean inverse) {
         parts.add(new PartDirectional(texture, x, y, width, height, color, direction, inverse));
     }
 
-    public void addGauge(ResourceLocation texture, int x, int y, int width, int height, Color color, GaugeDirection direction, boolean inverse) {
-        parts.add(new Part(texture, x, y, width, height, Color.WHITE));
-        parts.add(new PartDirectional(texture, x + width, y, width, height, color, direction, inverse));
+    public void addGauge(ResourceLocation texture, int x1, int y1, int x2, int y2, Color color, GaugeDirection direction, boolean inverse) {
+        parts.add(new Part(texture, x1, y1, width, height, Color.WHITE));
+        parts.add(new PartDirectional(texture, x2, y2, width, height, color, direction, inverse));
     }
 
     public void render(Minecraft minecraft, int x, int y, Fill fill) {
@@ -70,7 +85,7 @@ public class SlotVisual {
     }
 
     public SlotVisual copy() {
-        SlotVisual copy = new SlotVisual();
+        SlotVisual copy = new SlotVisual(width, height);
         for (Part part : parts) {
             copy.parts.add(part.copy());
         }
@@ -144,7 +159,7 @@ public class SlotVisual {
                     break;
             }
 
-            Misc.drawTexturedModalRect(x, y, ox, oy, ow, oh);
+            Misc.drawTexturedModalRect(x + ox, y + oy, this.x * 18 + ox, this.y * 18 + oy, ow, oh);
         }
 
         public Part copy() {

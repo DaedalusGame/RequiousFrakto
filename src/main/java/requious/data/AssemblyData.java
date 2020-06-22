@@ -139,15 +139,15 @@ public class AssemblyData extends BaseData {
     }
 
     @ZenMethod
-    public ComponentAutomata setAutomataSlot(int x, int y, ComponentFaceCT face, int capacity) {
-        ComponentAutomata component = new ComponentAutomata(face.get(),capacity);
+    public ComponentDecoration setDecorationSlot(int x, int y, SlotVisualCT visual) {
+        ComponentDecoration component = new ComponentDecoration(SlotVisualCT.unpack(visual));
         setSlot(x,y,component);
         return component;
     }
 
     @ZenMethod
-    public ComponentDecoration setDecorationSlot(int x, int y, SlotVisualCT visual) {
-        ComponentDecoration component = new ComponentDecoration(SlotVisualCT.unpack(visual));
+    public ComponentText setTextSlot(int x, int y) {
+        ComponentText component = new ComponentText();
         setSlot(x,y,component);
         return component;
     }

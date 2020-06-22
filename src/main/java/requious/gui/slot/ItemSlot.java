@@ -2,6 +2,7 @@ package requious.gui.slot;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentItem;
 import requious.gui.GuiAssembly;
 import requious.util.Fill;
@@ -11,8 +12,8 @@ import javax.annotation.Nonnull;
 
 public class ItemSlot extends BaseSlot<ComponentItem.Slot> {
 
-    public ItemSlot(ComponentItem.Slot binding, int xPosition, int yPosition) {
-        super(binding, xPosition, yPosition);
+    public ItemSlot(AssemblyProcessor assembly, ComponentItem.Slot binding, int xPosition, int yPosition) {
+        super(assembly, binding, xPosition, yPosition);
     }
 
     @Override
@@ -77,5 +78,10 @@ public class ItemSlot extends BaseSlot<ComponentItem.Slot> {
     @Override
     public ItemStack decrStackSize(int amount) {
         return binding.getItem().extract(amount,false);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return binding.canPut() || binding.canTake();
     }
 }

@@ -9,6 +9,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentBase;
 import requious.gui.GuiAssembly;
 
@@ -17,11 +18,13 @@ import java.util.List;
 public abstract class BaseSlot<T extends ComponentBase.Slot> extends Slot {
     private static IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
 
+    protected final AssemblyProcessor assembly;
     protected final T binding;
 
-    public BaseSlot(T binding, int xPosition, int yPosition) {
+    public BaseSlot(AssemblyProcessor assembly, T binding, int xPosition, int yPosition) {
         super(emptyInventory, 0, xPosition, yPosition);
         this.binding = binding;
+        this.assembly = assembly;
     }
 
     public void incrStack(int n) {

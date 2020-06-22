@@ -2,32 +2,18 @@ package requious.data.component;
 
 import crafttweaker.annotations.ZenRegister;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
-import requious.Requious;
-import requious.compat.crafttweaker.GaugeDirectionCT;
 import requious.compat.crafttweaker.SlotVisualCT;
-import requious.gui.GaugeDirection;
+import requious.data.AssemblyProcessor;
 import requious.gui.slot.DurationSlot;
-import requious.gui.slot.EnergySlot;
-import requious.recipe.AssemblyRecipe;
 import requious.recipe.RequirementDuration;
 import requious.util.ComponentFace;
-import requious.util.ItemComponentHelper;
 import requious.util.SlotVisual;
-import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 @ZenRegister
@@ -87,8 +73,8 @@ public class ComponentDuration extends ComponentBase {
         }
 
         @Override
-        public net.minecraft.inventory.Slot createGui(int x, int y) {
-            return new DurationSlot(this, x, y);
+        public net.minecraft.inventory.Slot createGui(AssemblyProcessor assembly, int x, int y) {
+            return new DurationSlot(assembly,this, x, y);
         }
 
         @Override

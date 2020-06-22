@@ -3,6 +3,7 @@ package requious.gui.slot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentDecoration;
 import requious.gui.GuiAssembly;
 import requious.util.Fill;
@@ -11,8 +12,8 @@ import requious.util.SlotVisual;
 import javax.annotation.Nonnull;
 
 public class DecorationSlot extends BaseSlot<ComponentDecoration.Slot> {
-    public DecorationSlot(ComponentDecoration.Slot binding, int xPosition, int yPosition) {
-        super(binding, xPosition, yPosition);
+    public DecorationSlot(AssemblyProcessor assembly, ComponentDecoration.Slot binding, int xPosition, int yPosition) {
+        super(assembly, binding, xPosition, yPosition);
     }
 
     @Override

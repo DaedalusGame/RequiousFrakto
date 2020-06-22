@@ -9,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import requious.data.AssemblyProcessor;
 import requious.tile.TileEntityAssembly;
 import requious.util.ComponentFace;
 import requious.util.ILaserStorage;
@@ -19,7 +20,6 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @ZenRegister
 @ZenClass("mods.requious.LaserSlot")
@@ -98,7 +98,7 @@ public class ComponentLaser extends ComponentBase {
         }
 
         @Override
-        public net.minecraft.inventory.Slot createGui(int x, int y) {
+        public net.minecraft.inventory.Slot createGui(AssemblyProcessor assembly, int x, int y) {
             return null;
         }
 
