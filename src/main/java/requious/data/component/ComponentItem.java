@@ -42,7 +42,7 @@ public class ComponentItem extends ComponentBase {
     public IOParameters pushItem = new IOParameters();
     public int capacity;
 
-    public SlotVisual background = SlotVisual.EMPTY;
+    public SlotVisual background = SlotVisual.ITEM_SLOT;
     public SlotVisual foreground = SlotVisual.EMPTY;
 
 

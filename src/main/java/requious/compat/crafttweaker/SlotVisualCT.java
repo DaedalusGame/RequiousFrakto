@@ -31,14 +31,53 @@ public class SlotVisualCT {
     }
 
     @ZenMethod
-    public static SlotVisualCT create() {
-        return new SlotVisualCT(new SlotVisual());
+    public static SlotVisualCT itemSlot() {
+        return new SlotVisualCT(SlotVisual.ITEM_SLOT);
     }
 
     @ZenMethod
-    public SlotVisualCT addPart(String texture, int x, int y, @Optional int[] rgb) {
+    public static SlotVisualCT fluidSlot() {
+        return new SlotVisualCT(SlotVisual.FLUID_SLOT);
+    }
+
+    @ZenMethod
+    public static SlotVisualCT infoSlot() {
+        return new SlotVisualCT(SlotVisual.INFO_SLOT);
+    }
+
+    @ZenMethod
+    public static SlotVisualCT energySlot() {
+        return new SlotVisualCT(SlotVisual.ENERGY_SLOT);
+    }
+
+    @ZenMethod
+    public static SlotVisualCT createSimple(String texture, int x, int y) {
+        SlotVisual visual = new SlotVisual();
+        visual.addPart(new ResourceLocation(texture), x, y, 1, 1, Color.WHITE);
+        return new SlotVisualCT(visual);
+    }
+
+    @ZenMethod
+    public static SlotVisualCT createGauge(String texture, int x, int y, GaugeDirectionCT direction, boolean inverse, @Optional(valueLong = 1) int width, @Optional(valueLong = 1) int height, @Optional int[] rgb) {
         Color color = Misc.parseColor(rgb);
-        internal.addPart(new ResourceLocation(texture), x, y, color);
+        SlotVisual visual = new SlotVisual();
+        visual.addGauge(new ResourceLocation(texture), x + width, y, width, height, color, direction.get(), inverse);
+        return new SlotVisualCT(visual);
+    }
+
+    @ZenMethod
+    public SlotVisualCT addPart(String texture, int x, int y, @Optional(valueLong = 1) int width, @Optional(valueLong = 1) int height, @Optional int[] rgb) {
+        Color color = Misc.parseColor(rgb);
+        internal = internal.copy();
+        internal.addPart(new ResourceLocation(texture), x, y, width, height, color);
+        return this;
+    }
+
+    @ZenMethod
+    public SlotVisualCT addDirectional(String texture, int x, int y, GaugeDirectionCT direction, boolean inverse, @Optional(valueLong = 1) int width, @Optional(valueLong = 1) int height, @Optional int[] rgb) {
+        Color color = Misc.parseColor(rgb);
+        internal = internal.copy();
+        internal.addDirectionalPart(new ResourceLocation(texture), x, y, width, height, color, direction.get(), inverse);
         return this;
     }
 }

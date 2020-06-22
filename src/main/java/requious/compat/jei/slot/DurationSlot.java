@@ -6,6 +6,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.util.text.TextFormatting;
 import requious.compat.jei.IngredientCollector;
 import requious.compat.jei.JEISlot;
+import requious.util.Fill;
 import requious.util.SlotVisual;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class DurationSlot extends JEISlot {
 
     @Override
     public void render(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        visual.render(minecraft,x*18,y*18);
+        visual.render(minecraft,x*18,y*18, new Fill(0,0));
     }
 
     @Override

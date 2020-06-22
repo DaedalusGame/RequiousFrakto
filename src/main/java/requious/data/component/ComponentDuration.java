@@ -11,6 +11,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import requious.Requious;
 import requious.compat.crafttweaker.GaugeDirectionCT;
+import requious.compat.crafttweaker.SlotVisualCT;
 import requious.gui.GaugeDirection;
 import requious.gui.slot.DurationSlot;
 import requious.gui.slot.EnergySlot;
@@ -18,6 +19,7 @@ import requious.recipe.AssemblyRecipe;
 import requious.recipe.RequirementDuration;
 import requious.util.ComponentFace;
 import requious.util.ItemComponentHelper;
+import requious.util.SlotVisual;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -31,36 +33,22 @@ import java.util.List;
 @ZenRegister
 @ZenClass("mods.requious.DurationSlot")
 public class ComponentDuration extends ComponentBase {
-    public ResourceLocation tex = new ResourceLocation(Requious.MODID, "textures/gui/assembly_gauges.png");
-    public int texX, texY;
-    public GaugeDirection texDirection;
-    public boolean texInverse;
+    public SlotVisual visual = SlotVisual.EMPTY;
 
     public ComponentDuration() {
         super(ComponentFace.None);
     }
 
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentDuration setVisual(SlotVisualCT visual) {
+        this.visual = SlotVisualCT.unpack(visual);
+        return this;
+    }
+
     @Override
     public ComponentBase.Slot createSlot() {
         return new Slot(this);
-    }
-
-    @ReturnsSelf
-    @ZenMethod
-    public ComponentDuration setTexture(int x, int y, GaugeDirectionCT direction, @Optional boolean invert) {
-        texX = x;
-        texY = y;
-        texDirection = direction.get();
-        texInverse = invert;
-        return this;
-    }
-
-    @ReturnsSelf
-    @ZenMethod
-    public ComponentDuration setTexture(String resource, int x, int y, GaugeDirectionCT direction, @Optional boolean invert) {
-        tex = new ResourceLocation(resource);
-        setTexture(x,y,direction,invert);
-        return this;
     }
 
     public static class Slot extends ComponentBase.Slot<ComponentDuration> {
@@ -136,20 +124,9 @@ public class ComponentDuration extends ComponentBase {
             duration = compound.getInteger("duration");
         }
 
-        public ResourceLocation getTexture() {
-            return component.tex;
-        }
-
-        public int getTextureX() {
-            return component.texX;
-        }
-
-        public int getTextureY() {
-            return component.texY;
-        }
-
-        public GaugeDirection getTextureDirection() {
-            return component.texDirection;
+        public SlotVisual getVisual()
+        {
+            return component.visual;
         }
 
         public void reset() {
@@ -170,10 +147,6 @@ public class ComponentDuration extends ComponentBase {
 
         public boolean isDone() {
             return time >= duration;
-        }
-
-        public boolean isInverse() {
-            return component.texInverse;
         }
     }
 }

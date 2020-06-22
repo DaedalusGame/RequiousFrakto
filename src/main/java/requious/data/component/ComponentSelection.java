@@ -25,7 +25,7 @@ public class ComponentSelection extends ComponentBase {
     String selectionGroup;
     Integer maxSelection;
 
-    public SlotVisual background = SlotVisual.EMPTY;
+    public SlotVisual background = SlotVisual.SELECTION_SLOT;
     public SlotVisual foreground = SlotVisual.EMPTY;
 
     public ComponentSelection(String selectionGroup, int index) {

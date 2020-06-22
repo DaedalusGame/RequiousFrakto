@@ -3,6 +3,7 @@ package requious.compat.jei.slot;
 import net.minecraft.client.Minecraft;
 import requious.compat.jei.IngredientCollector;
 import requious.compat.jei.JEISlot;
+import requious.util.Fill;
 import requious.util.SlotVisual;
 
 public class DecorationSlot extends JEISlot {
@@ -25,6 +26,6 @@ public class DecorationSlot extends JEISlot {
 
     @Override
     public void render(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        visual.render(minecraft,x*18,y*18);
+        visual.render(minecraft,x*18,y*18, new Fill(0,0));
     }
 }

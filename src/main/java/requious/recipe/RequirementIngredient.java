@@ -62,7 +62,9 @@ public class RequirementIngredient extends RequirementBase {
             ItemSlot itemSlot = (ItemSlot) slot;
             if(ingredient.getItems() != null) {
                 for (IItemStack stack : ingredient.getItems()) {
-                    itemSlot.items.add(CraftTweakerMC.getItemStack(stack));
+                    ItemStack jeiStack = CraftTweakerMC.getItemStack(stack);
+                    jeiStack.setCount(ingredient.getAmount());
+                    itemSlot.items.add(jeiStack);
                 }
             } else {
                 //TODO: Mark wildcard

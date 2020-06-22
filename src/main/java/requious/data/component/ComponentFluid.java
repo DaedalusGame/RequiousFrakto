@@ -49,6 +49,7 @@ public class ComponentFluid extends ComponentBase {
     public int capacity;
 
     public SlotVisual foreground = SlotVisual.EMPTY;
+    public SlotVisual background = SlotVisual.FLUID_SLOT;
 
     public ComponentFluid(ComponentFace face, int capacity) {
         super(face);
@@ -123,6 +124,13 @@ public class ComponentFluid extends ComponentBase {
     @ZenMethod
     public ComponentFluid setForeground(SlotVisualCT visual) {
         this.foreground = SlotVisualCT.unpack(visual);
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentFluid setBackground(SlotVisualCT visual) {
+        this.background = SlotVisualCT.unpack(visual);
         return this;
     }
 
@@ -308,6 +316,10 @@ public class ComponentFluid extends ComponentBase {
 
         public SlotVisual getForeground() {
             return component.foreground;
+        }
+
+        public SlotVisual getBackground() {
+            return component.background;
         }
     }
 

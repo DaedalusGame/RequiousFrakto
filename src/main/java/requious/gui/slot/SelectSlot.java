@@ -8,6 +8,7 @@ import requious.gui.GuiAssembly;
 import requious.network.PacketHandler;
 import requious.network.message.MessageScrollSlot;
 import requious.network.message.MessageSelectSlot;
+import requious.util.Fill;
 import requious.util.SlotVisual;
 
 import javax.annotation.Nonnull;
@@ -65,7 +66,7 @@ public class SelectSlot extends BaseSlot<ComponentSelection.Slot> {
         assembly.drawTexturedModalRect(x-1, y-1, 176, 0, 18, 18);
         SlotVisual visual = binding.getBackground();
         if(visual != null)
-            visual.render(assembly.mc,x-1, y-1);
+            visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
         if(binding.isSelected()) {
             assembly.drawTexturedModalRect(x-1, y-1, 176+18, 0+18, 18, 18);
         }
@@ -75,7 +76,7 @@ public class SelectSlot extends BaseSlot<ComponentSelection.Slot> {
     public void renderForeground(GuiAssembly assembly, int x, int y, int mousex, int mousey) {
         SlotVisual visual = binding.getForeground();
         if(visual != null)
-            visual.render(assembly.mc,x-1, y-1);
+            visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
     }
 
     @Override

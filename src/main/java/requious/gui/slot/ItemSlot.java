@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import requious.data.component.ComponentItem;
 import requious.gui.GuiAssembly;
+import requious.util.Fill;
 import requious.util.SlotVisual;
 
 import javax.annotation.Nonnull;
@@ -63,15 +64,14 @@ public class ItemSlot extends BaseSlot<ComponentItem.Slot> {
 
     @Override
     public void renderBackground(GuiAssembly assembly, int x, int y, float partialTicks, int mousex, int mousey) {
-        assembly.drawTexturedModalRect(x-1, y-1, 176, 0, 18, 18);
         SlotVisual visual = binding.getBackground();
-        visual.render(assembly.mc,x-1, y-1);
+        visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
     }
 
     @Override
     public void renderForeground(GuiAssembly assembly, int x, int y, int mousex, int mousey) {
         SlotVisual visual = binding.getForeground();
-        visual.render(assembly.mc,x-1, y-1);
+        visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
     }
 
     @Override

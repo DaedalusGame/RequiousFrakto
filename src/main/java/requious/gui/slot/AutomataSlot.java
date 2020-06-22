@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import requious.data.component.ComponentAutomata;
 import requious.data.component.ComponentItem;
 import requious.gui.GuiAssembly;
+import requious.util.Fill;
 import requious.util.SlotVisual;
 
 import javax.annotation.Nonnull;
@@ -67,14 +68,14 @@ public class AutomataSlot extends BaseSlot<ComponentAutomata.Slot> {
         assembly.drawTexturedModalRect(x-1, y-1, 176, 0, 18, 18);
         SlotVisual visual = binding.getBackground();
         if(visual != null)
-            visual.render(assembly.mc,x-1, y-1);
+            visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
     }
 
     @Override
     public void renderForeground(GuiAssembly assembly, int x, int y, int mousex, int mousey) {
         SlotVisual visual = binding.getForeground();
         if(visual != null)
-            visual.render(assembly.mc,x-1, y-1);
+            visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
     }
 
     @Override

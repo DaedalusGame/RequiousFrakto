@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
-import requious.recipe.ConsumptionResult;
 import requious.tile.TileEntityAssembly;
 import requious.util.ComponentFace;
 import stanhebben.zenscript.annotations.ReturnsSelf;

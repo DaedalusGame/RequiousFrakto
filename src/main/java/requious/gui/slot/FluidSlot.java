@@ -13,6 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import requious.data.component.ComponentFluid;
 import requious.gui.GuiAssembly;
+import requious.util.Fill;
 import requious.util.SlotVisual;
 
 import javax.annotation.Nonnull;
@@ -72,12 +73,19 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
 
     @Override
     public void renderBackground(GuiAssembly assembly, int x, int y, float partialTicks, int mousex, int mousey) {
-        assembly.drawTexturedModalRect(x-1, y-1, 176+18, 0, 18, 18);
+        SlotVisual background = binding.getBackground();
+        background.render(assembly.mc,x-1, y-1, getFill());
+        //assembly.drawTexturedModalRect(x-1, y-1, 176+18, 0, 18, 18);
+    }
+
+    private Fill getFill() {
+        return new Fill(binding.getAmount(),binding.getCapacity());
     }
 
     @Override
     public void renderForeground(GuiAssembly assembly,int x, int y, int mousex, int mousey) {
-        SlotVisual visual = binding.getForeground();
+
+        SlotVisual foreground = binding.getForeground();
         FluidStack contents = binding.getContents();
         if(contents != null) {
             assembly.mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -87,8 +95,12 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferbuilder = tessellator.getBuffer();
             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-            int widthIn = 16;
-            int heightIn = 16;
+
+            int widthSlot = 1;
+            int heightSlot = 1;
+
+            int widthIn = 18 * widthSlot - 2;
+            int heightIn = 18 * heightSlot - 2;
 
             int zLevel = 100;
             double fill = (double) contents.amount / binding.getCapacity();
@@ -104,8 +116,8 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
             bufferbuilder.pos(xCoord + 0, yCoord + 0, (double)zLevel).tex((double)textureSprite.getMinU(), (double)textureSprite.getMinV()).endVertex();
             tessellator.draw();
         }
-        if(visual != null)
-            visual.render(assembly.mc,x-1, y-1);
+        if(foreground != null)
+            foreground.render(assembly.mc,x-1, y-1, getFill());
     }
 
     @Override

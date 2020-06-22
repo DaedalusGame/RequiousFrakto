@@ -9,6 +9,8 @@ import requious.Requious;
 import requious.data.component.ComponentDuration;
 import requious.data.component.ComponentEnergy;
 import requious.gui.GuiAssembly;
+import requious.util.Fill;
+import requious.util.SlotVisual;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -63,46 +65,10 @@ public class DurationSlot extends BaseSlot<ComponentDuration.Slot> {
 
     @Override
     public void renderBackground(GuiAssembly assembly, int x, int y, float partialTicks, int mousex, int mousey) {
-        assembly.mc.getTextureManager().bindTexture(binding.getTexture());
-        int texX = binding.getTextureX();
-        int texY = binding.getTextureY();
-        assembly.drawTexturedModalRect(x-1, y-1, texX*18*2, texY*18, 18, 18);
+        SlotVisual visual = binding.getVisual();
         int energy = binding.getTime();
         int capacity = binding.getDuration();
-        boolean inverse = binding.isInverse();
-        if(capacity > 0) {
-            float ratio = (float) energy / capacity;
-            if(inverse)
-                ratio = 1 - ratio;
-            int fill = (int) (ratio * 18);
-            if (energy > 0 && fill <= 0)
-                fill = 1;
-            int empty = 18 - fill;
-
-            int ox = 0;
-            int oy = 0;
-            int ow = 18;
-            int oh = 18;
-
-            switch (binding.getTextureDirection()) {
-                case UP:
-                    oy = empty;
-                    oh = fill;
-                    break;
-                case DOWN:
-                    oh = fill;
-                    break;
-                case LEFT:
-                    ox = empty;
-                    ow = fill;
-                    break;
-                case RIGHT:
-                    ow = fill;
-                    break;
-            }
-
-            assembly.drawTexturedModalRect(x - 1 + ox, y - 1 + oy, texX * 18 * 2 + 18 + ox, texY * 18 + oy, ow, oh);
-        }
+        visual.render(assembly.mc,x-1, y-1,new Fill(energy,capacity));
     }
 
     @Override

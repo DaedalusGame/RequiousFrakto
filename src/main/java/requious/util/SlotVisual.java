@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import requious.Requious;
+import requious.gui.GaugeDirection;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -12,31 +13,142 @@ import java.util.List;
 public class SlotVisual {
     List<Part> parts = new ArrayList<>();
 
-    public static final SlotVisual EMPTY = new SlotVisual();
+    public static ResourceLocation GUI_SLOTS = new ResourceLocation(Requious.MODID,"textures/gui/assembly_slots.png");
+    public static ResourceLocation GUI_GAUGES = new ResourceLocation(Requious.MODID,"textures/gui/assembly_gauges.png");
 
-    public void addPart(ResourceLocation texture, int x, int y, Color color) {
-        parts.add(new Part(texture, x, y, color));
+    public static final SlotVisual EMPTY = new SlotVisual();
+    public static final SlotVisual ITEM_SLOT;
+    public static final SlotVisual FLUID_SLOT;
+    public static final SlotVisual ENERGY_SLOT;
+    public static final SlotVisual INFO_SLOT;
+    public static final SlotVisual SELECTION_SLOT;
+    public static final SlotVisual ARROW_RIGHT;
+    public static final SlotVisual ARROW_DOWN;
+    public static final SlotVisual ARROW_LEFT;
+    public static final SlotVisual ARROW_UP;
+
+    static {
+        ITEM_SLOT = new SlotVisual();
+        ITEM_SLOT.addPart(GUI_SLOTS,0,0, 1, 1, Color.WHITE);
+        FLUID_SLOT = new SlotVisual();
+        FLUID_SLOT.addPart(GUI_SLOTS,1,0, 1, 1, Color.WHITE);
+        ENERGY_SLOT = new SlotVisual();
+        ENERGY_SLOT.addGauge(GUI_GAUGES, 0, 0, 1, 1, Color.WHITE, GaugeDirection.UP, false);
+        INFO_SLOT = new SlotVisual();
+        INFO_SLOT.addPart(GUI_SLOTS,1,2, 1, 1, Color.WHITE);
+        SELECTION_SLOT = new SlotVisual();
+        SELECTION_SLOT.addPart(GUI_SLOTS,1,1, 1, 1, Color.WHITE);
+
+        ARROW_RIGHT = new SlotVisual();
+        ARROW_RIGHT.addGauge(GUI_GAUGES, 0, 8, 1, 1, Color.WHITE, GaugeDirection.RIGHT, false);
+        ARROW_DOWN = new SlotVisual();
+        ARROW_DOWN.addGauge(GUI_GAUGES, 2, 8, 1, 1, Color.WHITE, GaugeDirection.DOWN, false);
+        ARROW_LEFT = new SlotVisual();
+        ARROW_LEFT.addGauge(GUI_GAUGES, 4, 8, 1, 1, Color.WHITE, GaugeDirection.LEFT, false);
+        ARROW_UP = new SlotVisual();
+        ARROW_UP.addGauge(GUI_GAUGES, 6, 8, 1, 1, Color.WHITE, GaugeDirection.UP, false);
     }
 
-    public void render(Minecraft minecraft, int x, int y) {
+    public void addPart(ResourceLocation texture, int x, int y, int width, int height, Color color) {
+        parts.add(new Part(texture, x, y, width, height, color));
+    }
+
+    public void addDirectionalPart(ResourceLocation texture, int x, int y, int width, int height, Color color, GaugeDirection direction, boolean inverse) {
+        parts.add(new PartDirectional(texture, x, y, width, height, color, direction, inverse));
+    }
+
+    public void addGauge(ResourceLocation texture, int x, int y, int width, int height, Color color, GaugeDirection direction, boolean inverse) {
+        parts.add(new Part(texture, x, y, width, height, Color.WHITE));
+        parts.add(new PartDirectional(texture, x + width, y, width, height, color, direction, inverse));
+    }
+
+    public void render(Minecraft minecraft, int x, int y, Fill fill) {
         for (Part part : parts) {
-            minecraft.getTextureManager().bindTexture(part.texture);
-            GlStateManager.color(part.color.getRed() / 255f, part.color.getGreen() / 255f, part.color.getBlue() / 255f, part.color.getAlpha() / 255f);
-            Misc.drawTexturedModalRect(x, y, part.x * 18, part.y * 18, 18, 18);
+            part.render(minecraft, x, y, fill);
         }
         GlStateManager.color(1f, 1f, 1f, 1f);
     }
 
-    public static class Part {
-        ResourceLocation texture;
-        int x, y;
-        Color color;
+    public SlotVisual copy() {
+        SlotVisual copy = new SlotVisual();
+        for (Part part : parts) {
+            copy.parts.add(part.copy());
+        }
+        return copy;
+    }
 
-        public Part(ResourceLocation texture, int x, int y, Color color) {
+    public static class Part {
+        protected ResourceLocation texture;
+        protected int x, y;
+        protected int width, height;
+        protected Color color;
+
+        public Part(ResourceLocation texture, int x, int y, int width, int height, Color color) {
             this.texture = texture;
             this.x = x;
             this.y = y;
+            this.width = width;
+            this.height = height;
             this.color = color;
+        }
+
+        public void render(Minecraft minecraft, int x, int y, Fill fill) {
+            minecraft.getTextureManager().bindTexture(texture);
+            GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+            Misc.drawTexturedModalRect(x, y, this.x * 18, this.y * 18, width * 18, height * 18);
+        }
+
+        public Part copy() {
+            return new Part(texture, x, y, width, height, color);
+        }
+    }
+
+    public static class PartDirectional extends Part {
+        GaugeDirection direction;
+        boolean inverse;
+
+        public PartDirectional(ResourceLocation texture, int x, int y, int width, int height, Color color, GaugeDirection direction, boolean inverse) {
+            super(texture, x, y, width, height, color);
+            this.direction = direction;
+            this.inverse = inverse;
+        }
+
+        public void render(Minecraft minecraft, int x, int y, Fill fill) {
+            minecraft.getTextureManager().bindTexture(texture);
+            GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+
+            int fillX = fill.getFill(width * 18, inverse);
+            int fillY = fill.getFill(height * 18, inverse);
+            int emptyX = width * 18 - fillX;
+            int emptyY = height * 18 - fillY;
+
+            int ox = 0;
+            int oy = 0;
+            int ow = width * 18;
+            int oh = height * 18;
+
+            switch (direction) {
+                case UP:
+                    oy = emptyY;
+                    oh = fillY;
+                    break;
+                case DOWN:
+                    oh = fillY;
+                    break;
+                case LEFT:
+                    ox = emptyX;
+                    ow = fillX;
+                    break;
+                case RIGHT:
+                    ow = fillX;
+                    break;
+            }
+
+            Misc.drawTexturedModalRect(x, y, ox, oy, ow, oh);
+        }
+
+        public Part copy() {
+            return new PartDirectional(texture, x, y, width, height, color, direction, inverse);
         }
     }
 }
