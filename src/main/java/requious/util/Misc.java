@@ -153,16 +153,19 @@ public class Misc {
     }
 
     public static void drawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height) {
+        drawTexturedModalRect(x,y,100,textureX,textureY,width,height);
+    }
+
+    public static void drawTexturedModalRect(int x, int y, int z, int textureX, int textureY, int width, int height) {
         float f = 0.00390625F;
         float f1 = 0.00390625F;
-        int zlevel = 100;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-        bufferbuilder.pos((double) (x + 0), (double) (y + height), (double) zlevel).tex((double) ((float) (textureX + 0) * 0.00390625F), (double) ((float) (textureY + height) * 0.00390625F)).endVertex();
-        bufferbuilder.pos((double) (x + width), (double) (y + height), (double) zlevel).tex((double) ((float) (textureX + width) * 0.00390625F), (double) ((float) (textureY + height) * 0.00390625F)).endVertex();
-        bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) zlevel).tex((double) ((float) (textureX + width) * 0.00390625F), (double) ((float) (textureY + 0) * 0.00390625F)).endVertex();
-        bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) zlevel).tex((double) ((float) (textureX + 0) * 0.00390625F), (double) ((float) (textureY + 0) * 0.00390625F)).endVertex();
+        bufferbuilder.pos((double) (x + 0), (double) (y + height), (double) z).tex((double) ((float) (textureX + 0) * 0.00390625F), (double) ((float) (textureY + height) * 0.00390625F)).endVertex();
+        bufferbuilder.pos((double) (x + width), (double) (y + height), (double) z).tex((double) ((float) (textureX + width) * 0.00390625F), (double) ((float) (textureY + height) * 0.00390625F)).endVertex();
+        bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) z).tex((double) ((float) (textureX + width) * 0.00390625F), (double) ((float) (textureY + 0) * 0.00390625F)).endVertex();
+        bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) z).tex((double) ((float) (textureX + 0) * 0.00390625F), (double) ((float) (textureY + 0) * 0.00390625F)).endVertex();
         tessellator.draw();
     }
 

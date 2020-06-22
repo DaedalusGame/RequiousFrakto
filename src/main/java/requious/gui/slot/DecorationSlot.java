@@ -1,6 +1,5 @@
 package requious.gui.slot;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import requious.data.AssemblyProcessor;
@@ -67,7 +66,7 @@ public class DecorationSlot extends BaseSlot<ComponentDecoration.Slot> {
     public void renderBackground(GuiAssembly assembly, int x, int y, float partialTicks, int mousex, int mousey) {
         SlotVisual visual = binding.getVisual();
         if(visual != null)
-            visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
+            visual.render(assembly.mc,x-1, y-1, 100, new Fill(0,0));
     }
 
     @Override

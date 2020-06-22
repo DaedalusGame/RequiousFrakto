@@ -37,7 +37,8 @@ public class SlotVisual {
         INFO_SLOT = new SlotVisual(1, 1);
         INFO_SLOT.addPart(GUI_SLOTS, 1, 2, Color.WHITE);
         SELECTION_SLOT = new SlotVisual(1, 1);
-        SELECTION_SLOT.addPart(GUI_SLOTS, 1, 1, Color.WHITE);
+        SELECTION_SLOT.addPart(GUI_SLOTS, 0, 0, Color.WHITE);
+        SELECTION_SLOT.addDirectionalPart(GUI_SLOTS, 1, 1, Color.WHITE, GaugeDirection.UP, false);
 
         ARROW_RIGHT = new SlotVisual(1, 1);
         ARROW_RIGHT.addGauge(GUI_GAUGES, 0, 8, 1, 8, Color.WHITE, GaugeDirection.RIGHT, false);
@@ -77,9 +78,9 @@ public class SlotVisual {
         parts.add(new PartDirectional(texture, x2, y2, width, height, color, direction, inverse));
     }
 
-    public void render(Minecraft minecraft, int x, int y, Fill fill) {
+    public void render(Minecraft minecraft, int x, int y, int z, Fill fill) {
         for (Part part : parts) {
-            part.render(minecraft, x, y, fill);
+            part.render(minecraft, x, y, z, fill);
         }
         GlStateManager.color(1f, 1f, 1f, 1f);
     }
@@ -107,10 +108,10 @@ public class SlotVisual {
             this.color = color;
         }
 
-        public void render(Minecraft minecraft, int x, int y, Fill fill) {
+        public void render(Minecraft minecraft, int x, int y, int z, Fill fill) {
             minecraft.getTextureManager().bindTexture(texture);
             GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
-            Misc.drawTexturedModalRect(x, y, this.x * 18, this.y * 18, width * 18, height * 18);
+            Misc.drawTexturedModalRect(x, y, z, this.x * 18, this.y * 18, width * 18, height * 18);
         }
 
         public Part copy() {
@@ -128,7 +129,7 @@ public class SlotVisual {
             this.inverse = inverse;
         }
 
-        public void render(Minecraft minecraft, int x, int y, Fill fill) {
+        public void render(Minecraft minecraft, int x, int y, int z, Fill fill) {
             minecraft.getTextureManager().bindTexture(texture);
             GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 
@@ -159,7 +160,7 @@ public class SlotVisual {
                     break;
             }
 
-            Misc.drawTexturedModalRect(x + ox, y + oy, this.x * 18 + ox, this.y * 18 + oy, ow, oh);
+            Misc.drawTexturedModalRect(x + ox, y + oy, z, this.x * 18 + ox, this.y * 18 + oy, ow, oh);
         }
 
         public Part copy() {

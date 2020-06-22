@@ -10,6 +10,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Mouse;
 import requious.Requious;
@@ -35,6 +36,37 @@ public class GuiAssembly extends GuiContainer {
         this.drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    private boolean isMouseOverSlot(Slot slotIn, int mouseX, int mouseY)
+    {
+        int width = 16;
+        int height = 16;
+        if(slotIn instanceof BaseSlot) {
+            Vec3i size = ((BaseSlot) slotIn).getSize();
+            width = size.getX();
+            height = size.getY();
+        }
+        return this.isPointInRegion(slotIn.xPos, slotIn.yPos, width, height, mouseX, mouseY);
+    }
+
+    public Slot getSlotAtPosition(int x, int y)
+    {
+        for (int i = 0; i < this.inventorySlots.inventorySlots.size(); ++i)
+        {
+            Slot slot = this.inventorySlots.inventorySlots.get(i);
+
+            if (this.isMouseOverSlot(slot, x, y))
+            {
+                boolean enabled = slot.isEnabled();
+                if(slot instanceof BaseSlot)
+                    enabled = ((BaseSlot) slot).isHoverEnabled();
+                if(enabled)
+                    return slot;
+            }
+        }
+
+        return null;
     }
 
     @Override

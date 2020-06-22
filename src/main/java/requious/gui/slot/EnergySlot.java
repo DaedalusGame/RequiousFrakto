@@ -3,6 +3,7 @@ package requious.gui.slot;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.energy.CapabilityEnergy;
 import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentEnergy;
@@ -68,19 +69,19 @@ public class EnergySlot extends BaseSlot<ComponentEnergy.Slot> {
 
     @Override
     public void renderBackground(GuiAssembly assembly, int x, int y, float partialTicks, int mousex, int mousey) {
-        SlotVisual visual = binding.getBackground();
+        SlotVisual background = binding.getBackground();
         int energy = binding.getAmount();
         int capacity = binding.getCapacity();
-        visual.render(assembly.mc,x-1, y-1, new Fill(energy,capacity));
+        background.render(assembly.mc,x-1, y-1, 100, new Fill(energy,capacity));
     }
 
     @Override
     public void renderForeground(GuiAssembly assembly, int x, int y, int mousex, int mousey) {
-        SlotVisual visual = binding.getForeground();
+        SlotVisual foreground = binding.getForeground();
         int energy = binding.getAmount();
         int capacity = binding.getCapacity();
-        if(visual != null)
-            visual.render(assembly.mc,x-1, y-1, new Fill(energy,capacity));
+        if(foreground != null)
+            foreground.render(assembly.mc,x-1, y-1, 1000, new Fill(energy,capacity));
     }
 
     @Override
@@ -107,5 +108,26 @@ public class EnergySlot extends BaseSlot<ComponentEnergy.Slot> {
     @Override
     public boolean isEnabled() {
         return binding.isBatteryAccepted() && (binding.canPut() || binding.canTake());
+    }
+
+    @Override
+    public boolean isHoverEnabled() {
+        return true;
+    }
+
+    @Override
+    public Vec3i getSize() {
+        SlotVisual background = binding.getBackground();
+        return new Vec3i(background.getWidth() * 18 - 2, background.getHeight() * 18 - 2, 0);
+    }
+
+    @Override
+    public boolean canShiftPut() {
+        return super.canShiftPut() && binding.canPut();
+    }
+
+    @Override
+    public boolean canShiftTake() {
+        return super.canShiftTake() && binding.canTake();
     }
 }

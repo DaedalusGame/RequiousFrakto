@@ -65,14 +65,14 @@ public class ItemSlot extends BaseSlot<ComponentItem.Slot> {
 
     @Override
     public void renderBackground(GuiAssembly assembly, int x, int y, float partialTicks, int mousex, int mousey) {
-        SlotVisual visual = binding.getBackground();
-        visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
+        SlotVisual background = binding.getBackground();
+        background.render(assembly.mc,x-1, y-1, 100, new Fill(0,0));
     }
 
     @Override
     public void renderForeground(GuiAssembly assembly, int x, int y, int mousex, int mousey) {
-        SlotVisual visual = binding.getForeground();
-        visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
+        SlotVisual foreground = binding.getForeground();
+        foreground.render(assembly.mc,x-1, y-1, 1000, new Fill(0,0));
     }
 
     @Override
@@ -82,6 +82,21 @@ public class ItemSlot extends BaseSlot<ComponentItem.Slot> {
 
     @Override
     public boolean isEnabled() {
-        return binding.canPut() || binding.canTake();
+        return !binding.isHidden() && (binding.canPut() || binding.canTake());
+    }
+
+    @Override
+    public boolean isHoverEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean canShiftPut() {
+        return super.canShiftPut() && binding.canPut();
+    }
+
+    @Override
+    public boolean canShiftTake() {
+        return super.canShiftTake() && binding.canTake();
     }
 }

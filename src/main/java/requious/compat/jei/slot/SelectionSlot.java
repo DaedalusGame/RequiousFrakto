@@ -23,7 +23,7 @@ public class SelectionSlot extends ItemSlot {
     public void render(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         minecraft.getTextureManager().bindTexture(new ResourceLocation(Requious.MODID,"textures/gui/assembly_slots.png"));
         Misc.drawTexturedModalRect(x*18,y*18, 0, 0, 18,18);
-        visual.render(minecraft,x*18,y*18, new Fill(0,0));
+        visual.render(minecraft,x*18,y*18, 100, new Fill(0,0));
         Misc.drawTexturedModalRect(x*18,y*18, 18, 18, 18,18);
     }
 }

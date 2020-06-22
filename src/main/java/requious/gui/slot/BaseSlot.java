@@ -7,6 +7,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import requious.data.AssemblyProcessor;
@@ -73,7 +74,19 @@ public abstract class BaseSlot<T extends ComponentBase.Slot> extends Slot {
         return !binding.isHidden();
     }
 
-    public boolean canShift() {
+    public boolean canShiftPut() {
         return binding.canShift();
+    }
+
+    public boolean canShiftTake() {
+        return binding.canShift();
+    }
+
+    public boolean isHoverEnabled() {
+        return isEnabled();
+    }
+
+    public Vec3i getSize() {
+        return new Vec3i(16,16,0);
     }
 }

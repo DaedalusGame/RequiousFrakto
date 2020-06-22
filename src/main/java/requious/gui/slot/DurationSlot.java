@@ -1,14 +1,9 @@
 package requious.gui.slot;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.energy.CapabilityEnergy;
-import requious.Requious;
 import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentDuration;
-import requious.data.component.ComponentEnergy;
 import requious.gui.GuiAssembly;
 import requious.util.Fill;
 import requious.util.SlotVisual;
@@ -69,7 +64,7 @@ public class DurationSlot extends BaseSlot<ComponentDuration.Slot> {
         SlotVisual visual = binding.getVisual();
         int energy = binding.getTime();
         int capacity = binding.getDuration();
-        visual.render(assembly.mc,x-1, y-1,new Fill(energy,capacity));
+        visual.render(assembly.mc,x-1, y-1, 100, new Fill(energy,capacity));
     }
 
     @Override
@@ -95,5 +90,15 @@ public class DurationSlot extends BaseSlot<ComponentDuration.Slot> {
     @Override
     public ItemStack decrStackSize(int amount) {
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
+    @Override
+    public boolean isHoverEnabled() {
+        return true;
     }
 }

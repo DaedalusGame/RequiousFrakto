@@ -26,6 +26,6 @@ public class DecorationSlot extends JEISlot {
 
     @Override
     public void render(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        visual.render(minecraft,x*18,y*18, new Fill(0,0));
+        visual.render(minecraft,x*18,y*18, 100, new Fill(0,0));
     }
 }

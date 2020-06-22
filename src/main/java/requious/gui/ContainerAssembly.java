@@ -60,9 +60,15 @@ public class ContainerAssembly extends Container {
         return true;
     }
 
-    private static boolean canShiftClick(Slot slot) {
+    private static boolean canShiftPut(Slot slot) {
         if(slot instanceof BaseSlot)
-            return ((BaseSlot) slot).canShift();
+            return ((BaseSlot) slot).canShiftPut();
+        return true;
+    }
+
+    private static boolean canShiftTake(Slot slot) {
+        if(slot instanceof BaseSlot)
+            return ((BaseSlot) slot).canShiftTake();
         return true;
     }
 
@@ -73,7 +79,7 @@ public class ContainerAssembly extends Container {
         Slot slot = this.inventorySlots.get(index);
         int slots = machineSlots;
 
-        if(slot != null && slot.getHasStack() && canShiftClick(slot))
+        if(slot != null && slot.getHasStack() && canShiftTake(slot))
         {
             ItemStack stack1 = slot.getStack();
             stack = stack1.copy();
@@ -509,7 +515,7 @@ public class ContainerAssembly extends Container {
                 Slot slot = this.inventorySlots.get(i);
                 ItemStack itemstack = slot.getStack();
 
-                if (slot.isItemValid(stack) && canShiftClick(slot) && !itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack))
+                if (slot.isItemValid(stack) && canShiftPut(slot) && !itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack))
                 {
                     int j = itemstack.getCount() + stack.getCount();
                     int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
@@ -571,7 +577,7 @@ public class ContainerAssembly extends Container {
                 Slot slot1 = this.inventorySlots.get(i);
                 ItemStack itemstack1 = slot1.getStack();
 
-                if (canShiftClick(slot1) && itemstack1.isEmpty() && slot1.isItemValid(stack) && slot1.getItemStackLimit(stack) > 0)
+                if (canShiftPut(slot1) && itemstack1.isEmpty() && slot1.isItemValid(stack) && slot1.getItemStackLimit(stack) > 0)
                 {
                     if (stack.getCount() > slot1.getItemStackLimit(stack))
                     {

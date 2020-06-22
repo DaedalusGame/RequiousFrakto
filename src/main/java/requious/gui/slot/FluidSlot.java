@@ -9,6 +9,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import requious.data.AssemblyProcessor;
@@ -75,7 +76,7 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
     @Override
     public void renderBackground(GuiAssembly assembly, int x, int y, float partialTicks, int mousex, int mousey) {
         SlotVisual background = binding.getBackground();
-        background.render(assembly.mc,x-1, y-1, getFill());
+        background.render(assembly.mc,x-1, y-1, 100, getFill());
         //assembly.drawTexturedModalRect(x-1, y-1, 176+18, 0, 18, 18);
     }
 
@@ -118,7 +119,7 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
             tessellator.draw();
         }
         if(foreground != null)
-            foreground.render(assembly.mc,x-1, y-1, getFill());
+            foreground.render(assembly.mc,x-1, y-1, 1000, getFill());
     }
 
     @Override
@@ -148,5 +149,26 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
     @Override
     public boolean isEnabled() {
         return binding.isBucketAccepted() && (binding.canPut() || binding.canTake());
+    }
+
+    @Override
+    public boolean isHoverEnabled() {
+        return true;
+    }
+
+    @Override
+    public Vec3i getSize() {
+        SlotVisual background = binding.getBackground();
+        return new Vec3i(background.getWidth() * 18 - 2, background.getHeight() * 18 - 2, 0);
+    }
+
+    @Override
+    public boolean canShiftPut() {
+        return super.canShiftPut() && binding.canPut();
+    }
+
+    @Override
+    public boolean canShiftTake() {
+        return super.canShiftTake() && binding.canTake();
     }
 }

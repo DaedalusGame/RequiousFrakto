@@ -15,7 +15,7 @@ public class LaserRenderer extends FakeIngredientRenderer<Laser> {
     public void render(Minecraft minecraft, int xPosition, int yPosition, @Nullable Laser ingredient) {
         if(ingredient != null) {
             GlStateManager.enableAlpha();
-            ingredient.visual.render(minecraft,xPosition-1,yPosition-1, new Fill(0,0));
+            ingredient.visual.render(minecraft,xPosition-1,yPosition-1, 100, new Fill(0,0));
         }
     }
 

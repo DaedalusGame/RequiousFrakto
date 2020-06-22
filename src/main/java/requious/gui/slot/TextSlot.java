@@ -5,15 +5,12 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import requious.data.AssemblyProcessor;
-import requious.data.component.ComponentDecoration;
 import requious.data.component.ComponentText;
 import requious.gui.GuiAssembly;
-import requious.util.Fill;
 import requious.util.SlotVisual;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TextSlot extends BaseSlot<ComponentText.Slot> {
@@ -73,7 +70,7 @@ public class TextSlot extends BaseSlot<ComponentText.Slot> {
         SlotVisual visual = binding.getVisual();
 
         if(visual != null)
-            visual.render(assembly.mc,x-1, y-1, binding.getFill(this.assembly));
+            visual.render(assembly.mc,x-1, y-1, 100, binding.getFill(this.assembly));
     }
 
     @Override
@@ -131,6 +128,11 @@ public class TextSlot extends BaseSlot<ComponentText.Slot> {
 
     @Override
     public boolean isEnabled() {
+        return false;
+    }
+
+    @Override
+    public boolean isHoverEnabled() {
         return true;
     }
 }

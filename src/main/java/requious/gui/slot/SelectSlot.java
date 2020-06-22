@@ -64,20 +64,17 @@ public class SelectSlot extends BaseSlot<ComponentSelection.Slot> {
 
     @Override
     public void renderBackground(GuiAssembly assembly, int x, int y, float partialTicks, int mousex, int mousey) {
-        assembly.drawTexturedModalRect(x-1, y-1, 176, 0, 18, 18);
-        SlotVisual visual = binding.getBackground();
-        if(visual != null)
-            visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
-        if(binding.isSelected()) {
-            assembly.drawTexturedModalRect(x-1, y-1, 176+18, 0+18, 18, 18);
-        }
+        //assembly.drawTexturedModalRect(x-1, y-1, 176, 0, 18, 18);
+        SlotVisual background = binding.getBackground();
+        if(background != null)
+            background.render(assembly.mc,x-1, y-1, 100, new Fill(binding.isSelected() ? 1 : 0,1));
     }
 
     @Override
     public void renderForeground(GuiAssembly assembly, int x, int y, int mousex, int mousey) {
-        SlotVisual visual = binding.getForeground();
-        if(visual != null)
-            visual.render(assembly.mc,x-1, y-1, new Fill(0,0));
+        SlotVisual foreground = binding.getForeground();
+        if(foreground != null)
+            foreground.render(assembly.mc,x-1, y-1, 1000, new Fill(binding.isSelected() ? 1 : 0,1));
     }
 
     @Override
