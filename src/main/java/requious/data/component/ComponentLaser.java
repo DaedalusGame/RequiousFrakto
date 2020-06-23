@@ -103,7 +103,7 @@ public class ComponentLaser extends ComponentBase {
         }
 
         public void updateLaser(World world, BlockPos pos, EnumFacing tileFacing) {
-            EnumFacing side = TileEntityAssembly.toGlobalSide(tileFacing,getFace().getSide(currentFacing));
+            EnumFacing side = TileEntityAssembly.toSide(tileFacing,getFace().getSide(currentFacing));
             util.setEmitter(world, pos, side, emitType, emitVisual);
             if(canOutput()) {
                 util.setTarget(component.areaStart, component.areaEnd);

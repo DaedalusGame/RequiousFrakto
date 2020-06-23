@@ -100,7 +100,7 @@ public abstract class ComponentBase {
         }
     }
 
-    public static abstract class Collector implements ICapabilityProvider {
+    public static abstract class Collector {
         TileEntity tile;
 
         public abstract boolean accept(Slot slot);
@@ -109,14 +109,12 @@ public abstract class ComponentBase {
             return false;
         }
 
-        @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing localSide, @Nullable EnumFacing globalSide) {
             return false;
         }
 
         @Nullable
-        @Override
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing localSide, @Nullable EnumFacing globalSide) {
             return null;
         }
 

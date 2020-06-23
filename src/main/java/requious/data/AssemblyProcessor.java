@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AssemblyProcessor implements ICapabilityProvider {
+public class AssemblyProcessor {
     AssemblyData data;
     Slot[][] slots = new Slot[9][5];
     List<Collector> collectors = new ArrayList<>();
@@ -309,31 +309,29 @@ public class AssemblyProcessor implements ICapabilityProvider {
         deserializeCache(compound.getCompoundTag("cache"));
     }
 
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing localSide, @Nullable EnumFacing globalSide) {
         for (Collector collector : collectors) {
-            if(collector.hasCapability() && collector.hasCapability(capability,facing))
+            if(collector.hasCapability() && collector.hasCapability(capability,localSide,globalSide))
                 return true;
         }
         return false;
     }
 
     @Nullable
-    @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing localSide, @Nullable EnumFacing globalSide) {
         T instance = null;
         for (Collector collector : collectors) {
             if(collector.hasCapability())
-                instance = collector.getCapability(capability,facing);
+                instance = collector.getCapability(capability,localSide,globalSide);
             if(instance != null)
                 break;
         }
         return instance;
     }
 
-    public ILaserStorage getLaserAcceptor(EnumFacing facing) {
+    public ILaserStorage getLaserAcceptor(EnumFacing localSide, EnumFacing globalSide) {
         for (Collector collector : collectors) {
-            if(collector instanceof ComponentLaser.Collector && ((ComponentLaser.Collector)collector).getFace().matches(facing))
+            if(collector instanceof ComponentLaser.Collector && ((ComponentLaser.Collector)collector).getFace().matches(localSide,globalSide))
                 return (ILaserStorage) collector;
         }
         return null;

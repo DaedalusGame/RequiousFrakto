@@ -420,9 +420,9 @@ public class ComponentEnergy extends ComponentBase {
             extraDraw = amount;
         }
 
-        public double inject(EnumFacing side, double amount, double voltage) {
+        public double inject(EnumFacing localSide, EnumFacing globalSide, double amount, double voltage) {
             for (Slot slot : slots) {
-                if (slot.canInput() && slot.getFace().matches(side)) {
+                if (slot.canInput() && slot.getFace().matches(localSide,globalSide)) {
                     int inserted = slot.receive(slot.getEUConversion().getBase((int) Math.floor(amount)), false);
                     amount -= slot.getEUConversion().getUnit(inserted);
                 }
@@ -446,17 +446,17 @@ public class ComponentEnergy extends ComponentBase {
             return EnergyNet.instance.getTierFromPower(maxVoltage);
         }
 
-        public boolean canInputEnergy(EnumFacing side) {
+        public boolean canInputEnergy(EnumFacing localSide, EnumFacing globalSide) {
             for (Slot slot : slots) {
-                if (slot.canInput() && slot.getFace().matches(side))
+                if (slot.canInput() && slot.getFace().matches(localSide,globalSide))
                     return true;
             }
             return false;
         }
 
-        public boolean canOutputEnergy(EnumFacing side) {
+        public boolean canOutputEnergy(EnumFacing localSide, EnumFacing globalSide) {
             for (Slot slot : slots) {
-                if (slot.canOutput() && slot.getFace().matches(side))
+                if (slot.canOutput() && slot.getFace().matches(localSide,globalSide))
                     return true;
             }
             return false;
@@ -509,18 +509,18 @@ public class ComponentEnergy extends ComponentBase {
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-            if (capability == CapabilityEnergy.ENERGY && face.matches(facing))
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing localSide, @Nullable EnumFacing globalSide) {
+            if (capability == CapabilityEnergy.ENERGY && face.matches(localSide, globalSide))
                 return true;
-            return super.hasCapability(capability, facing);
+            return super.hasCapability(capability, localSide, globalSide);
         }
 
         @Nullable
         @Override
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-            if (capability == CapabilityEnergy.ENERGY && face.matches(facing))
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing localSide, @Nullable EnumFacing globalSide) {
+            if (capability == CapabilityEnergy.ENERGY && face.matches(localSide, globalSide))
                 return CapabilityEnergy.ENERGY.cast(this);
-            return super.getCapability(capability, facing);
+            return super.getCapability(capability, localSide, globalSide);
         }
 
         private boolean canAutoOutput() {
@@ -536,7 +536,7 @@ public class ComponentEnergy extends ComponentBase {
             if (canAutoOutput() && tile instanceof TileEntityAssembly) {
                 World world = tile.getWorld();
                 BlockPos pos = tile.getPos();
-                EnumFacing facing = TileEntityAssembly.toGlobalSide(((TileEntityAssembly) tile).getFacing(), face.getSide(pushIndex));
+                EnumFacing facing = TileEntityAssembly.toSide(((TileEntityAssembly) tile).getFacing(), face.getSide(pushIndex));
 
                 TileEntity checkTile = world.getTileEntity(pos.offset(facing));
                 if (checkTile != null && checkTile.hasCapability(CapabilityEnergy.ENERGY, facing.getOpposite())) {

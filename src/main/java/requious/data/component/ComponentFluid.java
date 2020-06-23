@@ -356,18 +356,18 @@ public class ComponentFluid extends ComponentBase {
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-            if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && face.matches(facing))
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing localSide, @Nullable EnumFacing globalSide) {
+            if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && face.matches(localSide,globalSide))
                 return true;
-            return super.hasCapability(capability, facing);
+            return super.hasCapability(capability, localSide,globalSide);
         }
 
         @Nullable
         @Override
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-            if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && face.matches(facing))
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing localSide, @Nullable EnumFacing globalSide) {
+            if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && face.matches(localSide, globalSide))
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this);
-            return super.getCapability(capability, facing);
+            return super.getCapability(capability, localSide,globalSide);
         }
 
         private boolean canAutoOutput() {
@@ -383,7 +383,7 @@ public class ComponentFluid extends ComponentBase {
             if (canAutoOutput() && tile instanceof TileEntityAssembly) {
                 World world = tile.getWorld();
                 BlockPos pos = tile.getPos();
-                EnumFacing facing = TileEntityAssembly.toGlobalSide(((TileEntityAssembly) tile).getFacing(), face.getSide(pushIndex));
+                EnumFacing facing = TileEntityAssembly.toSide(((TileEntityAssembly) tile).getFacing(), face.getSide(pushIndex));
 
                 TileEntity checkTile = world.getTileEntity(pos.offset(facing));
                 if (checkTile != null && checkTile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite())) {

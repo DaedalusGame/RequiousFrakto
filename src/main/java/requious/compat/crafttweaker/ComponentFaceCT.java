@@ -16,6 +16,14 @@ public class ComponentFaceCT {
     private static final ComponentFaceCT FRONT_SIDE = new ComponentFaceCT(ComponentFace.FrontSide);
     private static final ComponentFaceCT BACK_SIDE = new ComponentFaceCT(ComponentFace.BackSide);
     private static final ComponentFaceCT NONE = new ComponentFaceCT(ComponentFace.None);
+    private static final ComponentFaceCT UP = new ComponentFaceCT(ComponentFace.Up);
+    private static final ComponentFaceCT DOWN = new ComponentFaceCT(ComponentFace.Down);
+    private static final ComponentFaceCT NORTH = new ComponentFaceCT(ComponentFace.North);
+    private static final ComponentFaceCT SOUTH = new ComponentFaceCT(ComponentFace.South);
+    private static final ComponentFaceCT EAST = new ComponentFaceCT(ComponentFace.East);
+    private static final ComponentFaceCT WEST = new ComponentFaceCT(ComponentFace.West);
+    private static final ComponentFaceCT HORIZONTAL = new ComponentFaceCT(ComponentFace.Horizontal);
+    private static final ComponentFaceCT VERTICAL = new ComponentFaceCT(ComponentFace.Vertical);
 
     ComponentFace internal;
 
@@ -65,5 +73,45 @@ public class ComponentFaceCT {
     @ZenMethod
     public static ComponentFaceCT none() {
         return NONE;
+    }
+
+    @ZenMethod
+    public static ComponentFaceCT north() {
+        return NORTH;
+    }
+
+    @ZenMethod
+    public static ComponentFaceCT south() {
+        return SOUTH;
+    }
+
+    @ZenMethod
+    public static ComponentFaceCT east() {
+        return EAST;
+    }
+
+    @ZenMethod
+    public static ComponentFaceCT west() {
+        return WEST;
+    }
+
+    @ZenMethod
+    public static ComponentFaceCT up() {
+        return UP;
+    }
+
+    @ZenMethod
+    public static ComponentFaceCT down() {
+        return DOWN;
+    }
+
+    @ZenMethod
+    public static ComponentFaceCT horizontal() {
+        return HORIZONTAL;
+    }
+
+    @ZenMethod
+    public static ComponentFaceCT vertical() {
+        return VERTICAL;
     }
 }

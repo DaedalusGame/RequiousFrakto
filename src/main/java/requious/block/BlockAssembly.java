@@ -154,7 +154,7 @@ public class BlockAssembly extends Block implements IDynamicModel {
 
     @Override
     public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override
