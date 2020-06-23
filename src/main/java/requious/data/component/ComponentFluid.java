@@ -211,11 +211,11 @@ public class ComponentFluid extends ComponentBase {
         }
 
         public boolean canPut() {
-            return component.bucketAllowed && component.putAllowed;
+            return !component.hidden && component.bucketAllowed && component.putAllowed;
         }
 
         public boolean canTake() {
-            return component.takeAllowed;
+            return !component.hidden && component.takeAllowed;
         }
 
         public boolean canOverfill() {

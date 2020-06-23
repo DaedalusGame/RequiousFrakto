@@ -268,11 +268,11 @@ public class ComponentEnergy extends ComponentBase {
         }
 
         public boolean canPut() {
-            return component.batteryAllowed && component.putAllowed;
+            return !component.hidden && component.batteryAllowed && component.putAllowed;
         }
 
         public boolean canTake() {
-            return component.takeAllowed;
+            return !component.hidden && component.takeAllowed;
         }
 
         public boolean canOverfill() {

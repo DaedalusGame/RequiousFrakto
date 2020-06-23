@@ -182,11 +182,11 @@ public class ComponentItem extends ComponentBase {
         }
 
         public boolean canPut() {
-            return component.putAllowed;
+            return !component.hidden && component.putAllowed;
         }
 
         public boolean canTake() {
-            return component.takeAllowed;
+            return !component.hidden && component.takeAllowed;
         }
 
         public boolean canOverfill() {

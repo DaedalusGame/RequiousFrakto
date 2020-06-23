@@ -14,7 +14,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.6"
+version = "0.7"
 group= "requious" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Requious Frakto"
 

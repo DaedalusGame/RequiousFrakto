@@ -39,10 +39,15 @@ public class AssemblyProcessor {
     Map<String, CheckCache> cache = new HashMap<>();
     Map<String, Object> variables = new HashMap<>();
     MachineContainer container;
+    int activeTime;
 
     public AssemblyProcessor(AssemblyData data) {
         this.data = data;
         container = new MachineContainer(this);
+    }
+
+    public boolean isActive() {
+        return container.getInteger("active") > 0;
     }
 
     public TileEntity getTile() {
@@ -246,6 +251,7 @@ public class AssemblyProcessor {
     }
 
     public void update() {
+        container.setInteger("active", container.getInteger("active")-1);
         for(int x = 0; x < slots.length; x++) {
             for (int y = 0; y < slots[x].length; y++) {
                 Slot slot = slots[x][y];

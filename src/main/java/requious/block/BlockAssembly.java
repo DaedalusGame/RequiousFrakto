@@ -2,6 +2,7 @@ package requious.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -29,6 +30,7 @@ import java.awt.*;
 
 public class BlockAssembly extends Block implements IDynamicModel {
     public static final PropertyDirection facing = PropertyDirection.create("facing");
+    public static final PropertyBool active = PropertyBool.create("active");
 
     AssemblyData data;
 
@@ -40,6 +42,7 @@ public class BlockAssembly extends Block implements IDynamicModel {
         for(EnumFacing facing : EnumFacing.VALUES) {
             aabbs[facing.getIndex()] = Misc.rotateAABB(data.aabb,facing);
         }
+        setDefaultState(getBlockState().getBaseState().withProperty(active,false));
     }
 
     public AssemblyData getData() {
@@ -48,7 +51,7 @@ public class BlockAssembly extends Block implements IDynamicModel {
 
     @Override
     public BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, facing);
+        return new BlockStateContainer(this, facing, active);
     }
 
     @Override
@@ -59,6 +62,15 @@ public class BlockAssembly extends Block implements IDynamicModel {
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(facing, EnumFacing.getFront(meta));
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        state = super.getActualState(state,world,pos);
+        TileEntity tile = world.getTileEntity(pos);
+        if(tile instanceof TileEntityAssembly)
+            return state.withProperty(active, ((TileEntityAssembly)tile).isActive());
+        return state;
     }
 
     @Override

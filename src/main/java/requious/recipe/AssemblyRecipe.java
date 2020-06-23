@@ -139,6 +139,12 @@ public class AssemblyRecipe implements IRecipeWrapper {
         return this;
     }
 
+    @ZenMethod
+    public AssemblyRecipe setActive(int time) {
+        requirements.add(new RequirementActive(time));
+        return this;
+    }
+
     public  List<ConsumptionResult> matches(AssemblyProcessor assembly, RecipeContainer container) {
         List<ComponentBase.Slot> slots = assembly.getSlots();
         List<ConsumptionResult> results = new ArrayList<>();

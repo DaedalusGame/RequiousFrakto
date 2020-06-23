@@ -35,6 +35,7 @@ public class TileEntityAssembly extends TileEntity implements ITickable, ILaserA
     ResourceLocation block;
     boolean shouldSync;
     EntityPlayer owner;
+    boolean active;
 
     public void setBlock(BlockAssembly block) {
         this.block = block.getRegistryName();
@@ -51,6 +52,10 @@ public class TileEntityAssembly extends TileEntity implements ITickable, ILaserA
     public AssemblyData getData() {
         BlockAssembly assembly = this.getBlock();
         return assembly.getData();
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     public static EnumFacing toLocalSide(EnumFacing facing, EnumFacing side) {
@@ -180,6 +185,12 @@ public class TileEntityAssembly extends TileEntity implements ITickable, ILaserA
             processor.update();
             if (processor.isDirty())
                 markDirty();
+            boolean newActive = processor.isActive();
+            if(newActive != active) {
+                IBlockState state = world.getBlockState(pos);
+                world.notifyBlockUpdate(pos,state,state,2);
+                active = newActive;
+            }
         }
         if(shouldSync)
             Misc.syncTE(this, false);
