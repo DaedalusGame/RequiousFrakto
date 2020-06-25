@@ -148,7 +148,7 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
 
     @Override
     public boolean isEnabled() {
-        return binding.isBucketAccepted();
+        return !binding.isHidden() && binding.isBucketAccepted();
     }
 
     @Override

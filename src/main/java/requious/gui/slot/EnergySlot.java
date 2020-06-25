@@ -107,7 +107,7 @@ public class EnergySlot extends BaseSlot<ComponentEnergy.Slot> {
 
     @Override
     public boolean isEnabled() {
-        return binding.isBatteryAccepted();
+        return !binding.isHidden() && binding.isBatteryAccepted();
     }
 
     @Override
