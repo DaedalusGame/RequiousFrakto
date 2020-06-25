@@ -36,6 +36,10 @@ public enum ComponentFace {
         }
     }
 
+    public Facing[] getSides() {
+        return sides;
+    }
+
     public boolean matches(EnumFacing sideLocal, EnumFacing sideGlobal) {
         /*switch (sideLocal) {
             case DOWN:

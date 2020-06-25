@@ -147,6 +147,20 @@ public class ComponentEnergy extends ComponentBase {
 
     @ReturnsSelf
     @ZenMethod
+    public ComponentEnergy acceptFE(boolean accept){
+        acceptsFE = accept;
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentEnergy acceptEU(boolean accept){
+        acceptsEU = accept;
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
     public ComponentEnergy setForeground(SlotVisualCT visual) {
         this.foreground = SlotVisualCT.unpack(visual);
         return this;
