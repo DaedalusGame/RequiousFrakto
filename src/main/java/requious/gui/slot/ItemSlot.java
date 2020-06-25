@@ -82,7 +82,7 @@ public class ItemSlot extends BaseSlot<ComponentItem.Slot> {
 
     @Override
     public boolean isEnabled() {
-        return !binding.isHidden() && (binding.canPut() || binding.canTake());
+        return !binding.isHidden();
     }
 
     @Override
