@@ -166,7 +166,7 @@ public class BlockAssembly extends Block implements IDynamicModel {
 
     @Override
     public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
+        return BlockRenderLayer.CUTOUT;
     }
 
     @Override
@@ -179,9 +179,16 @@ public class BlockAssembly extends Block implements IDynamicModel {
         return false;
     }
 
-    @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
-        return BlockFaceShape.UNDEFINED;
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        switch (data.layerType) {
+            case Cutout:
+                return BlockRenderLayer.CUTOUT == layer;
+            case Translucent:
+                return BlockRenderLayer.TRANSLUCENT == layer;
+            case MultiLayer:
+                return BlockRenderLayer.CUTOUT == layer || BlockRenderLayer.TRANSLUCENT == layer;
+        }
+        return false;
     }
 
     @Override

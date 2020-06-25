@@ -16,5 +16,7 @@ public interface IProxy {
 
     void spawnSpark(World world, IParticleAnchor anchor, double x1, double y1, double z1, double x2, double y2, double z2, Color color, double thickness, int lifetime);
 
+    void emitSmoke(World world, double x, double y, double z, double vx, double vy, double vz, Color color, int lifetime, boolean fullBright);
+
     boolean shouldRenderArcs();
 }

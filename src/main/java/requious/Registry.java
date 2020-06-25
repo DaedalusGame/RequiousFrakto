@@ -28,6 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -45,6 +46,8 @@ import requious.item.IDynamicItemModel;
 import requious.item.ItemBattery;
 import requious.item.ItemFluidCell;
 import requious.item.ItemTuningFork;
+import requious.tile.TileEntityAssembly;
+import requious.tile.TileEntityAssemblyRenderer;
 import requious.util.AABBTypeAdapter;
 import requious.util.ColorTypeAdapter;
 import requious.util.LaserVisual;
@@ -182,6 +185,8 @@ public class Registry {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void registerModels(ModelRegistryEvent event) {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAssembly.class, new TileEntityAssemblyRenderer());
+
         for (BlockRedEmitter emitter : RED_EMITTERS) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(emitter), 0, new ModelResourceLocation(emitter.getRedirect(), "inventory"));
 
@@ -195,7 +200,9 @@ public class Registry {
         for (AssemblyData data : ASSEMBLY_DATA) {
             BlockAssembly assembly = data.getBlock();
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(assembly), 0, new ModelResourceLocation(assembly.getRedirect(), "inventory"));
-
+            for(int i = 0; i < data.extraVariants.length; i++) {
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(assembly), i+1, new ModelResourceLocation(data.extraVariants[i]));
+            }
             ModelLoader.setCustomStateMapper(assembly, new DynamicStateMapper());
         }
         for(FluidCellData data : FLUID_CELL_DATA) {

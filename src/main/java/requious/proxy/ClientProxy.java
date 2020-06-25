@@ -2,6 +2,7 @@ package requious.proxy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.particle.ParticleSmokeNormal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -13,6 +14,7 @@ import requious.item.ItemTuningFork;
 import requious.particle.IParticleAnchor;
 import requious.particle.ParticleGlow;
 import requious.particle.ParticleRenderer;
+import requious.particle.ParticleSmokeColored;
 
 import java.awt.*;
 import java.util.Random;
@@ -77,6 +79,12 @@ public class ClientProxy implements IProxy {
             double sparkz = MathHelper.clampedLerp(z1,z2,coeff);
             emitGlow(world, anchor, sparkx, sparky, sparkz, 0, 0, 0, color, (float)thickness, (float)thickness, lifetime, 0);
         }
+    }
+
+    @Override
+    public void emitSmoke(World world, double x, double y, double z, double vx, double vy, double vz, Color color, int lifetime, boolean fullBright) {
+        ParticleSmokeNormal particle = new ParticleSmokeColored(world,x,y,z,vx,vy,vz,lifetime,color,fullBright);
+        Minecraft.getMinecraft().effectRenderer.addEffect(particle);
     }
 
     @Override

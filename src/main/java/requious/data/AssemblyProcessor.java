@@ -23,6 +23,7 @@ import requious.recipe.ConsumptionResult;
 import requious.tile.TileEntityAssembly;
 import requious.util.CheckCache;
 import requious.util.ILaserStorage;
+import requious.util.MachineVisual;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +39,7 @@ public class AssemblyProcessor {
     TileEntity tile;
     Map<String, CheckCache> cache = new HashMap<>();
     Map<String, Object> variables = new HashMap<>();
+    Map<String, Object> variablesHistory = new HashMap<>();
     MachineContainer container;
     int activeTime;
 
@@ -62,7 +64,7 @@ public class AssemblyProcessor {
 
     public void setOwner(EntityPlayer player) {
         setVariable("owner", player.getName());
-        setVariable("ownerUUID", player.getGameProfile().getId());
+        setVariable("ownerUUID", player.getGameProfile().getId().toString());
         tile.markDirty();
     }
 
@@ -73,6 +75,14 @@ public class AssemblyProcessor {
     public void setVariable(String name, Object value) {
         variables.put(name,value);
         tile.markDirty();
+    }
+
+    public void stashVariable(String name) {
+        variablesHistory.put(name, getVariable(name));
+    }
+
+    public Object getHistory(String name) {
+        return variablesHistory.get(name);
     }
 
     public boolean isCacheInvalid(String type, long time, long interval) {
@@ -88,6 +98,10 @@ public class AssemblyProcessor {
     public void setCacheResult(String type, boolean result, long time) {
         CheckCache check = cache.computeIfAbsent(type, k -> new CheckCache());
         check.setResult(result, time);
+    }
+
+    public Iterable<MachineVisual> getVisuals() {
+        return data.getVisuals();
     }
 
     public boolean check(IWorldFunction worldCheck, String group, long interval) {

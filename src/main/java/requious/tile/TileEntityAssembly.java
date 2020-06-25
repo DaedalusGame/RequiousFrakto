@@ -23,6 +23,7 @@ import requious.data.component.ComponentEnergy;
 import requious.recipe.AssemblyRecipe;
 import requious.util.Facing;
 import requious.util.ILaserStorage;
+import requious.util.MachineVisual;
 import requious.util.Misc;
 
 import javax.annotation.Nullable;
@@ -182,6 +183,9 @@ public class TileEntityAssembly extends TileEntity implements ITickable, ILaserA
         if (processor == null)
             initProcessor();
         else {
+            for (MachineVisual visual : processor.getVisuals()) {
+                visual.update(this);
+            }
             processor.update();
             if (processor.isDirty())
                 markDirty();

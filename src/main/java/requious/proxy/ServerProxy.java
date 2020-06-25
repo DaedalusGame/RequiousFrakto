@@ -32,6 +32,11 @@ public class ServerProxy implements IProxy {
     }
 
     @Override
+    public void emitSmoke(World world, double x, double y, double z, double vx, double vy, double vz, Color color, int lifetime, boolean fullBright) {
+
+    }
+
+    @Override
     public boolean shouldRenderArcs() {
         return false;
     }

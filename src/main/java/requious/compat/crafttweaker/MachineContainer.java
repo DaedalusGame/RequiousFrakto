@@ -8,11 +8,14 @@ import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.world.IBlockPos;
 import crafttweaker.api.world.IFacing;
+import crafttweaker.api.world.IVector3d;
 import crafttweaker.api.world.IWorld;
+import crafttweaker.mc1120.world.MCVector3d;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fluids.FluidStack;
 import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentBase;
@@ -116,6 +119,15 @@ public class MachineContainer {
     }
 
     @ZenMethod
+    public IVector3d getVector(String name) {
+        Object value = assembly.getVariable(name);
+        if(value instanceof Vec3d)
+            return CraftTweakerMC.getIVector3d((Vec3d) value);
+        else
+            return CraftTweakerMC.getIVector3d(Vec3d.ZERO);
+    }
+
+    @ZenMethod
     public void setInteger(String name, int value) {
         assembly.setVariable(name,value);
     }
@@ -131,6 +143,16 @@ public class MachineContainer {
     }
 
     @ZenMethod
+    public void setFacing(String name, IFacing value) {
+        assembly.setVariable(name,value.getInternal());
+    }
+
+    @ZenMethod
+    public void setColor(String name, ColorCT value) {
+        assembly.setVariable(name,value.get());
+    }
+
+    @ZenMethod
     public void setItem(String name, IItemStack value) {
         assembly.setVariable(name,CraftTweakerMC.getItemStack(value));
     }
@@ -138,6 +160,11 @@ public class MachineContainer {
     @ZenMethod
     public void setFluid(String name, ILiquidStack value) {
         assembly.setVariable(name,CraftTweakerMC.getLiquidStack(value));
+    }
+
+    @ZenMethod
+    public void setVector(String name, double x, double y, double z) {
+        assembly.setVariable(name,new Vec3d(x,y,z));
     }
 
     //Accessing specific slots

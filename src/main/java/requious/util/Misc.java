@@ -188,7 +188,7 @@ public class Misc {
         return lerpColorHSB(colors.get(index),colors.get(index+1),lerp * (colors.size()-1) % 1);
     }
 
-    static Color lerpColorRGB(Color colorA, Color colorB, double lerp) {
+    public static Color lerpColorRGB(Color colorA, Color colorB, double lerp) {
         int r = (int)MathHelper.clampedLerp(colorA.getRed(),colorB.getRed(),lerp);
         int g = (int)MathHelper.clampedLerp(colorA.getGreen(),colorB.getGreen(),lerp);
         int b = (int)MathHelper.clampedLerp(colorA.getBlue(),colorB.getBlue(),lerp);
@@ -196,7 +196,7 @@ public class Misc {
         return new Color(r,g,b,a);
     }
 
-    static Color lerpColorHSB(Color colorA, Color colorB, double lerp) {
+    public static Color lerpColorHSB(Color colorA, Color colorB, double lerp) {
         float[] hsbA = Color.RGBtoHSB(colorA.getRed(),colorA.getGreen(),colorA.getBlue(),null);
         float[] hsbB = Color.RGBtoHSB(colorB.getRed(),colorB.getGreen(),colorB.getBlue(),null);
         float h = (float)MathHelper.clampedLerp(hsbA[0],hsbB[0],lerp);
@@ -212,5 +212,9 @@ public class Misc {
         if (rgb != null && rgb.length >= 3 && rgb.length <= 4)
             color = new Color(rgb[0], rgb[1], rgb[2], rgb.length == 4 ? rgb[3] : 255);
         return color;
+    }
+
+    public static Vec3d getLocalVector(Vec3d vector, EnumFacing facing) {
+        return new Vec3d(xOffset(vector, facing), yOffset(vector,facing), zOffset(vector,facing));
     }
 }

@@ -10,11 +10,14 @@ import net.minecraft.item.ItemStack;
 import requious.Registry;
 import requious.block.BlockAssembly;
 import requious.compat.crafttweaker.ComponentFaceCT;
+import requious.compat.crafttweaker.MachineVisualCT;
 import requious.compat.crafttweaker.SlotVisualCT;
 import requious.compat.jei.JEISlot;
 import requious.compat.jei.slot.*;
 import requious.data.component.*;
 import requious.recipe.AssemblyRecipe;
+import requious.util.LayerType;
+import requious.util.MachineVisual;
 import requious.util.PlaceType;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -24,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 @ZenRegister
 @ZenClass("mods.requious.Assembly")
@@ -35,7 +37,9 @@ public class AssemblyData extends BaseData {
     public transient Map<String,List<AssemblyRecipe>> recipes = new HashMap<>();
 
     public PlaceType placeType = PlaceType.Any;
+    public LayerType layerType = LayerType.Cutout;
     public boolean hasGUI = true;
+    public String[] extraVariants = new String[0];
 
     @Expose(serialize = false, deserialize = false)
     public transient List<JEISlot> jeiSlots = new ArrayList<>();
@@ -45,6 +49,8 @@ public class AssemblyData extends BaseData {
     public transient List<ItemStack> jeiCatalysts = new ArrayList<>();
     @Expose(serialize = false, deserialize = false)
     private transient BlockAssembly block;
+    @Expose(serialize = false, deserialize = false)
+    private transient List<MachineVisual> visuals = new ArrayList<>();
 
     public AssemblyProcessor constructProcessor() {
         AssemblyProcessor processor = new AssemblyProcessor(this);
@@ -59,6 +65,10 @@ public class AssemblyData extends BaseData {
 
     public BlockAssembly getBlock() {
         return block;
+    }
+
+    public List<MachineVisual> getVisuals() {
+        return visuals;
     }
 
     @ZenMethod
@@ -152,6 +162,10 @@ public class AssemblyData extends BaseData {
         return component;
     }
 
+    @ZenMethod
+    public void addVisual(MachineVisualCT visual) {
+        visuals.add(visual.get());
+    }
 
     @ZenMethod
     public void addRecipe(AssemblyRecipe recipe) {
