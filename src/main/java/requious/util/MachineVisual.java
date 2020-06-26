@@ -35,7 +35,7 @@ public abstract class MachineVisual {
     }
 
     protected boolean isActive(AssemblyProcessor assembly) {
-        return variableActive.getDouble(assembly,0) > 0;
+        return variableActive.getDouble(assembly) > 0;
     }
 
     public void update(TileEntityAssembly tile) {
@@ -440,18 +440,18 @@ public abstract class MachineVisual {
             if(!isActive(assembly))
                 return;
             BlockPos pos = tile.getPos();
-            Vec3d start = variableStart.getVector(assembly, 0);
-            Vec3d end = variableEnd.getVector(assembly, 0);
-            Color color = variableColor.getColor(assembly, 0);
+            Vec3d start = variableStart.getVector(assembly);
+            Vec3d end = variableEnd.getVector(assembly);
+            Color color = variableColor.getColor(assembly);
             double x = start.x + random.nextDouble() * (end.x - start.x);
             double y = start.y + random.nextDouble() * (end.y - start.y);
             double z = start.z + random.nextDouble() * (end.z - start.z);
 
             Vec3d offset = new Vec3d(x, y, z);
-            Vec3d velocity = variableVelocity.getVector(assembly,0);
-            float minSize = (float) variableSizeMin.getDouble(assembly,0);
-            float maxSize = (float) variableSizeMax.getDouble(assembly,0);
-            int lifetime = variableLifetime.getInteger(assembly,0);
+            Vec3d velocity = variableVelocity.getVector(assembly);
+            float minSize = (float) variableSizeMin.getDouble(assembly);
+            float maxSize = (float) variableSizeMax.getDouble(assembly);
+            int lifetime = variableLifetime.getInteger(assembly);
             lifetime = lifetime / 2 + random.nextInt(lifetime / 2);
 
             if (!global) {
@@ -490,16 +490,16 @@ public abstract class MachineVisual {
             if(!isActive(assembly))
                 return;
             BlockPos pos = tile.getPos();
-            Vec3d start = variableStart.getVector(assembly, 0);
-            Vec3d end = variableEnd.getVector(assembly, 0);
-            Color color = variableColor.getColor(assembly, 0);
+            Vec3d start = variableStart.getVector(assembly);
+            Vec3d end = variableEnd.getVector(assembly);
+            Color color = variableColor.getColor(assembly);
             double x = start.x + random.nextDouble() * (end.x - start.x);
             double y = start.y + random.nextDouble() * (end.y - start.y);
             double z = start.z + random.nextDouble() * (end.z - start.z);
 
             Vec3d offset = new Vec3d(x, y, z);
-            Vec3d velocity = variableVelocity.getVector(assembly,0);
-            int lifetime = variableLifetime.getInteger(assembly,0);
+            Vec3d velocity = variableVelocity.getVector(assembly);
+            int lifetime = variableLifetime.getInteger(assembly);
             lifetime = lifetime / 2 + random.nextInt(lifetime / 2);
 
             if (!global) {

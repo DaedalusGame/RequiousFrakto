@@ -145,6 +145,8 @@ public class ComponentFluid extends ComponentBase {
             };
         }
 
+
+
         @Override
         public void addCollectors(List<ComponentBase.Collector> collectors) {
             Collector fluid = new Collector(getFace());
@@ -187,6 +189,16 @@ public class ComponentFluid extends ComponentBase {
         @Override
         public void deserializeNBT(NBTTagCompound compound) {
             fluid = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag("fluid"));
+        }
+
+        @Override
+        public boolean canInputItem() {
+            return component.bucketAllowed;
+        }
+
+        @Override
+        public boolean canOutputItem() {
+            return component.bucketAllowed;
         }
 
         public boolean canInput() {
@@ -260,7 +272,7 @@ public class ComponentFluid extends ComponentBase {
 
         @Override
         public boolean canDrain() {
-            return canOutput();
+            return canOutputItem();
         }
 
         @Override
@@ -270,7 +282,7 @@ public class ComponentFluid extends ComponentBase {
 
         @Override
         public boolean canDrainFluidType(FluidStack fluidStack) {
-            return canOutput() && true;
+            return canOutputItem() && true;
         }
 
         public int fill(FluidStack resource, boolean simulate) {
@@ -443,7 +455,7 @@ public class ComponentFluid extends ComponentBase {
         @Override
         public FluidStack drain(FluidStack resource, boolean doDrain) {
             for (Slot slot : slots) {
-                if (!slot.canOutput())
+                if (!slot.canOutputItem())
                     continue;
                 FluidStack extracted = slot.drain(resource, !doDrain);
                 if (extracted != null)
@@ -456,7 +468,7 @@ public class ComponentFluid extends ComponentBase {
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
             for (Slot slot : slots) {
-                if (!slot.canOutput())
+                if (!slot.canOutputItem())
                     continue;
                 FluidStack extracted = slot.drain(maxDrain, !doDrain);
                 if (extracted != null)

@@ -69,11 +69,19 @@ public abstract class Parameter {
         return null;
     }
 
+    public int getInteger(AssemblyProcessor assembly) {
+        return toInt(getValue(assembly));
+    }
+
     public int getInteger(AssemblyProcessor assembly, float partialTicks) {
         int current = toInt(getValue(assembly));
         int last = toInt(getLastValue(assembly));
 
         return (int) MathHelper.clampedLerp(last,current,partialTicks);
+    }
+
+    public double getDouble(AssemblyProcessor assembly) {
+        return toDouble(getValue(assembly));
     }
 
     public double getDouble(AssemblyProcessor assembly, float partialTicks) {
@@ -85,6 +93,10 @@ public abstract class Parameter {
 
     public String getString(AssemblyProcessor assembly) {
         return toString(getValue(assembly));
+    }
+
+    public Vec3d getVector(AssemblyProcessor assembly) {
+        return toVector(getValue(assembly));
     }
 
     public Vec3d getVector(AssemblyProcessor assembly, float partialTicks) {
@@ -100,6 +112,10 @@ public abstract class Parameter {
 
     public EnumFacing getFacing(AssemblyProcessor assembly) {
         return toFacing(getValue(assembly));
+    }
+
+    public Color getColor(AssemblyProcessor assembly) {
+        return toColor(getValue(assembly));
     }
 
     public Color getColor(AssemblyProcessor assembly, float partialTicks) {

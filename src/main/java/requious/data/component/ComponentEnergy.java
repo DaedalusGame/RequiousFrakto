@@ -273,6 +273,16 @@ public class ComponentEnergy extends ComponentBase {
             battery.readFromNBT(compound.getCompoundTag("battery"));
         }
 
+        @Override
+        public boolean canInputItem() {
+            return component.batteryAllowed;
+        }
+
+        @Override
+        public boolean canOutputItem() {
+            return component.batteryAllowed;
+        }
+
         public boolean canInput() {
             return component.inputAllowed;
         }
@@ -426,7 +436,7 @@ public class ComponentEnergy extends ComponentBase {
         public void draw(double amount) {
             amount += extraDraw;
             for (Slot slot : slots) {
-                if (slot.canOutput()) {
+                if (slot.canOutputItem()) {
                     int extracted = slot.extract(slot.getEUConversion().getBase((int) Math.ceil(amount)), false);
                     amount -= slot.getEUConversion().getUnit(extracted);
                 }
@@ -470,7 +480,7 @@ public class ComponentEnergy extends ComponentBase {
 
         public boolean canOutputEnergy(EnumFacing localSide, EnumFacing globalSide) {
             for (Slot slot : slots) {
-                if (slot.canOutput() && slot.getFace().matches(localSide,globalSide))
+                if (slot.canOutputItem() && slot.getFace().matches(localSide,globalSide))
                     return true;
             }
             return false;
@@ -479,7 +489,7 @@ public class ComponentEnergy extends ComponentBase {
         public double getOutputEnergy() {
             int toSend = 0;
             for (Slot slot : slots) {
-                if (slot.canOutput())
+                if (slot.canOutputItem())
                     toSend += Math.min( slot.getEUConversion().getUnit(slot.getMaxOutput()), slot.energy);
             }
             return toSend;

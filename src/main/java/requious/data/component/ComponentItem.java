@@ -173,11 +173,11 @@ public class ComponentItem extends ComponentBase {
             return item;
         }
 
-        public boolean canInput() {
+        public boolean canInputItem() {
             return component.inputAllowed;
         }
 
-        public boolean canOutput() {
+        public boolean canOutputItem() {
             return component.outputAllowed;
         }
 
@@ -229,9 +229,9 @@ public class ComponentItem extends ComponentBase {
     public interface IItemSlot {
         ItemComponentHelper getItem();
 
-        boolean canInput();
+        boolean canInputItem();
 
-        boolean canOutput();
+        boolean canOutputItem();
 
         IOParameters getPushItem();
 
@@ -347,7 +347,7 @@ public class ComponentItem extends ComponentBase {
         @Override
         public ItemStack insertItem(int i, @Nonnull ItemStack stack, boolean simulate) {
             IItemSlot slot = slots.get(i);
-            if(slot.canInput() && (slot.canSplit() || (!slot.getItem().isEmpty() && slot.getItem().canStack(stack)) || !hasItemStored(stack)))
+            if(slot.canInputItem() && (slot.canSplit() || (!slot.getItem().isEmpty() && slot.getItem().canStack(stack)) || !hasItemStored(stack)))
                 return slot.getItem().insert(stack,simulate);
             else
                 return stack;
@@ -357,7 +357,7 @@ public class ComponentItem extends ComponentBase {
         @Override
         public ItemStack extractItem(int i, int amount, boolean simulate) {
             IItemSlot slot = slots.get(i);
-            if(slot.canOutput())
+            if(slot.canOutputItem())
                 return slot.getItem().extract(amount,simulate);
             else
                 return ItemStack.EMPTY;
