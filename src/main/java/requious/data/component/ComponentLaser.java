@@ -28,6 +28,8 @@ public class ComponentLaser extends ComponentBase {
     public boolean outputAllowed = true;
     public int minReceive = 0;
     public int maxReceive = Integer.MAX_VALUE;
+    public int minTargets = 1;
+    public int maxTargets = 1;
     public HashSet<String> types = new HashSet<>();
     public Vec3i areaStart = Vec3i.NULL_VECTOR;
     public Vec3i areaEnd = Vec3i.NULL_VECTOR;
@@ -61,6 +63,14 @@ public class ComponentLaser extends ComponentBase {
     public ComponentLaser setLimit(int min, int max) {
         minReceive = min;
         maxReceive = max;
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentLaser setMultiTarget(int minTargets, int maxTargets) {
+        this.minTargets = minTargets;
+        this.maxTargets = maxTargets;
         return this;
     }
 
@@ -107,16 +117,19 @@ public class ComponentLaser extends ComponentBase {
             util.setEmitter(world, pos, side, emitType, emitVisual);
             if(canOutput()) {
                 util.setTarget(component.areaStart, component.areaEnd);
+                util.setMultiTarget(component.minTargets, component.maxTargets);
                 if (util.failure()) {
                     util.setDirty();
                     currentFacing++;
                 } else if (util.success()) {
-                    if (!util.hasTarget())
+                    if (util.foundNew())
                         util.pickTarget();
                     util.fire(emitAmount);
                     markDirty();
                     emitType = null;
                     emitAmount = 0;
+                    if(!util.hasMaxTargets())
+                        util.startSearch();
                 } else {
                     util.next();
                 }

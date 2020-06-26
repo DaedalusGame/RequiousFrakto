@@ -1,21 +1,45 @@
 package requious.util;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
-import requious.Requious;
-import requious.particle.IParticleAnchor;
 import requious.tile.ILaserAcceptor;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class LaserUtil {
+    static class Target {
+        ILaserAcceptor target;
+        int sent;
+
+        public Target(ILaserAcceptor target) {
+            this.target = target;
+        }
+
+        public Target(ILaserAcceptor target, int sent) {
+            this.target = target;
+            this.sent = sent;
+        }
+
+        public BlockPos getPosition() {
+            return target.getPosition();
+        }
+    }
+
+    static class LazyTarget {
+        BlockPos targetPos;
+        int sent;
+
+        public LazyTarget(BlockPos targetPos, int sent) {
+            this.targetPos = targetPos;
+            this.sent = sent;
+        }
+    }
+
     public enum State {
         SEARCHING,
         FOUND,
@@ -31,13 +55,14 @@ public class LaserUtil {
     private int x1, y1, z1;
     private int x2, y2, z2;
     private int x, y, z;
+    private int minTargets = 1, maxTargets = 1;
     private List<ILaserAcceptor> acceptors = new ArrayList<>();
-    private ILaserAcceptor currentTarget;
     private LaserVisual visual;
-    private int sent;
+    private List<Target> targets = new ArrayList<>();
 
     State state = State.SEARCHING;
-    BlockPos targetPos; //For deserialization only
+    List<ILaserAcceptor> searchAcceptors = new ArrayList<>();
+    List<LazyTarget> lazyTargets = new ArrayList<>(); //For deserialization only
 
     public World getWorld() {
         return world;
@@ -70,18 +95,31 @@ public class LaserUtil {
         }
     }
 
+    public void setMultiTarget(int minTargets, int maxTargets) {
+        this.minTargets = minTargets;
+        this.maxTargets = maxTargets;
+    }
+
     public void setDirty() {
+        targets.clear();
+        acceptors.clear();
+        startSearch();
+    }
+
+    public void startSearch() {
         state = State.SEARCHING;
-        sent = 0;
-        currentTarget = null;
         x = x1;
         y = y1;
         z = z1;
-        acceptors.clear();
+        searchAcceptors.clear();
     }
 
-    public boolean hasTarget() {
-        return currentTarget != null;
+    public boolean hasTargets() {
+        return targets.size() >= minTargets && targets.size() <= maxTargets;
+    }
+
+    public boolean hasMaxTargets() {
+        return targets.size() == maxTargets;
     }
 
     private boolean moveCursor() {
@@ -108,13 +146,13 @@ public class LaserUtil {
             if (!targetPos.equals(emitPos) && target instanceof ILaserAcceptor) {
                 ILaserStorage laserStorage = ((ILaserAcceptor) target).getLaserStorage(emitFacing);
                 if (laserStorage != null && laserStorage.receive(type, Integer.MAX_VALUE, true) > 0) {
-                    acceptors.add((ILaserAcceptor) target);
+                    searchAcceptors.add((ILaserAcceptor) target);
                 }
             }
 
             boolean looped = moveCursor();
             if (looped) {
-                if (acceptors.isEmpty())
+                if (searchAcceptors.isEmpty())
                     state = State.NOT_FOUND;
                 else
                     state = State.FOUND;
@@ -122,52 +160,75 @@ public class LaserUtil {
         }
     }
 
-    public void pickTarget() {
-        ILaserAcceptor acceptor = acceptors.get(random.nextInt(acceptors.size()));
-        currentTarget = acceptor;
-    }
-
-    private ILaserAcceptor getTarget() {
-        return currentTarget;
-    }
-
-    private BlockPos getTargetPosition() {
-        if(currentTarget != null && currentTarget.isValid()) {
-            return currentTarget.getPosition();
+    public boolean foundNew() {
+        HashSet<ILaserAcceptor> test = new HashSet<>(acceptors);
+        for (ILaserAcceptor acceptor : searchAcceptors) {
+            if(!test.contains(acceptor))
+                return true;
         }
-        return null;
+        return false;
     }
 
-    private void setTargetPosition(BlockPos pos) {
-        targetPos = pos;
+    public void pickTarget() {
+        acceptors.clear();
+        acceptors.addAll(searchAcceptors);
+        searchAcceptors.clear();
+        targets.clear();
+        int required = maxTargets;
+        while(targets.size() < required && !acceptors.isEmpty()) {
+            ILaserAcceptor acceptor = acceptors.get(random.nextInt(acceptors.size()));
+            //ILaserAcceptor acceptor = acceptors.stream().min(Comparator.comparingDouble(this::getDistance)).get();
+            targets.add(new Target(acceptor));
+            acceptors.remove(acceptor);
+        }
+    }
+
+    private double getDistance(ILaserAcceptor acceptor) {
+        BlockPos pos = acceptor.getPosition();
+        return pos.distanceSq(emitPos);
     }
 
     public void fire(int power) {
         readTarget();
-        if(currentTarget != null && currentTarget.isValid()) {
-            ILaserStorage storage = currentTarget.getLaserStorage(emitFacing);
-            if (storage != null && power > 0) {
-                sent = storage.receive(type, power, false);
+        boolean dirty = false;
+        if(hasTargets()) {
+            for (Target currentTarget : targets) {
+                if (currentTarget.target.isValid()) {
+                    ILaserStorage storage = currentTarget.target.getLaserStorage(emitFacing);
+                    if (storage != null && power > 0) {
+                        currentTarget.sent = storage.receive(type, power, false);
+                    }
+                } else {
+                    dirty = true;
+                }
             }
-        } else {
+        }
+        if(dirty) {
             setDirty();
         }
     }
 
     private void readTarget() { //Deserialize only
-        if(targetPos != null && world != null) {
-            TileEntity tile = world.getTileEntity(targetPos);
-            if(tile instanceof ILaserAcceptor)
-                currentTarget = (ILaserAcceptor) tile;
-            targetPos = null;
+        if(world != null && !lazyTargets.isEmpty()) {
+            targets.clear();
+            Iterator<LazyTarget> iterator = lazyTargets.iterator();
+            while(iterator.hasNext()) {
+                LazyTarget target = iterator.next();
+                TileEntity tile = world.getTileEntity(target.targetPos);
+                if(tile instanceof ILaserAcceptor)
+                    targets.add(new Target((ILaserAcceptor) tile,target.sent));
+                iterator.remove();
+            }
         }
     }
 
     public void render() {
         readTarget();
-        if (visual != null && world != null && world.isRemote && currentTarget != null && currentTarget.isValid() && sent > 0) {
-            BlockPos target = getTargetPosition();
-            visual.render(world,emitPos,target,sent);
+        if (visual != null && world != null && world.isRemote) {
+            for (Target target : targets) {
+                if (target.target.isValid() && target.sent > 0)
+                    visual.render(world, emitPos, target.getPosition(), target.sent);
+            }
         }
     }
 
@@ -180,13 +241,18 @@ public class LaserUtil {
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        BlockPos pos = getTargetPosition();
-        if (pos != null) {
-            compound.setInteger("targetX", pos.getX());
-            compound.setInteger("targetY", pos.getY());
-            compound.setInteger("targetZ", pos.getZ());
+        NBTTagList targetList = new NBTTagList();
+        for (Target target : targets) {
+            BlockPos pos = target.getPosition();
+            NBTTagCompound targetCompound = new NBTTagCompound();
+            targetCompound.setInteger("targetX", pos.getX());
+            targetCompound.setInteger("targetY", pos.getY());
+            targetCompound.setInteger("targetZ", pos.getZ());
+            targetCompound.setInteger("sent", target.sent);
+            targetList.appendTag(targetCompound);
         }
-        compound.setInteger("sent", sent);
+
+        compound.setTag("targets", targetList);
         compound.setInteger("x1",x1);
         compound.setInteger("y1",y1);
         compound.setInteger("z1",z1);
@@ -197,13 +263,17 @@ public class LaserUtil {
     }
 
     public void readFromNBT(NBTTagCompound compound) {
-        if (compound.hasKey("targetX")) {
-            targetPos = new BlockPos(compound.getInteger("targetX"), compound.getInteger("targetY"), compound.getInteger("targetZ"));
-            state = State.FOUND;
-        } else {
-            state = State.NOT_FOUND;
+        state = State.NOT_FOUND;
+        if(compound.hasKey("targets")) {
+            NBTTagList targetList = compound.getTagList("targets", 10);
+            for(int i = 0; i < targetList.tagCount(); i++){
+                NBTTagCompound targetCompound = targetList.getCompoundTagAt(i);
+                BlockPos targetPos = new BlockPos(targetCompound.getInteger("targetX"), targetCompound.getInteger("targetY"), targetCompound.getInteger("targetZ"));
+
+                lazyTargets.add(new LazyTarget(targetPos,targetCompound.getInteger("sent")));
+                state = State.FOUND;
+            }
         }
-        sent = compound.getInteger("sent");
         x1 = compound.getInteger("x1");
         y1 = compound.getInteger("y1");
         z1 = compound.getInteger("z1");

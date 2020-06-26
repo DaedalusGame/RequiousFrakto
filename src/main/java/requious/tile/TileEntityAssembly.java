@@ -285,4 +285,12 @@ public class TileEntityAssembly extends TileEntity implements ITickable, ILaserA
         ComponentEnergy.CollectorIC2 handler = processor.getIC2Handler();
         return handler.getOutputTier();
     }
+
+    @Override
+    public String toString() {
+        String dataName = "NO DATA";
+        if(getData() != null)
+            dataName = getData().resourceName;
+        return String.format("%s (%s)",super.toString(),dataName);
+    }
 }
