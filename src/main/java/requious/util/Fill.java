@@ -11,7 +11,7 @@ public class Fill {
 
     public double getRatio(boolean inverse) {
         if(capacity <= 0)
-            return 1;
+            return 0;
         if(amount >= capacity)
             return 1;
         if(amount <= 0)

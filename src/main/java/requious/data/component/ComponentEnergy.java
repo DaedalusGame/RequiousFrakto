@@ -211,7 +211,7 @@ public class ComponentEnergy extends ComponentBase {
 
         @Override
         public void addCollectors(List<ComponentBase.Collector> collectors) {
-            if (component.batteryAllowed) {
+            if (isBatteryAccepted() && component.batteryAllowed) {
                 ComponentItem.Collector item = new ComponentItem.Collector(getFace());
                 if (!collectors.contains(item))
                     collectors.add(item);

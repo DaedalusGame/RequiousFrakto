@@ -175,11 +175,12 @@ public class LaserUtil {
         searchAcceptors.clear();
         targets.clear();
         int required = maxTargets;
-        while(targets.size() < required && !acceptors.isEmpty()) {
-            ILaserAcceptor acceptor = acceptors.get(random.nextInt(acceptors.size()));
-            //ILaserAcceptor acceptor = acceptors.stream().min(Comparator.comparingDouble(this::getDistance)).get();
+        List<ILaserAcceptor> acceptorSet = new ArrayList<>(acceptors);
+        while(targets.size() < required && !acceptorSet.isEmpty()) {
+            ILaserAcceptor acceptor = acceptorSet.get(random.nextInt(acceptorSet.size()));
+            //ILaserAcceptor acceptor = acceptorSet.stream().min(Comparator.comparingDouble(this::getDistance)).get();
             targets.add(new Target(acceptor));
-            acceptors.remove(acceptor);
+            acceptorSet.remove(acceptor);
         }
     }
 
@@ -196,7 +197,8 @@ public class LaserUtil {
                 if (currentTarget.target.isValid()) {
                     ILaserStorage storage = currentTarget.target.getLaserStorage(emitFacing);
                     if (storage != null && power > 0) {
-                        currentTarget.sent = storage.receive(type, power, false);
+                        int sent = storage.receive(type, power, false);
+                        currentTarget.sent = sent;
                     }
                 } else {
                     dirty = true;
@@ -226,8 +228,11 @@ public class LaserUtil {
         readTarget();
         if (visual != null && world != null && world.isRemote) {
             for (Target target : targets) {
-                if (target.target.isValid() && target.sent > 0)
+                if(target.sent <= 0)
+                    System.out.println("Test2");
+                if (target.target.isValid() && target.sent > 0) {
                     visual.render(world, emitPos, target.getPosition(), target.sent);
+                }
             }
         }
     }
@@ -265,6 +270,7 @@ public class LaserUtil {
     public void readFromNBT(NBTTagCompound compound) {
         state = State.NOT_FOUND;
         if(compound.hasKey("targets")) {
+            lazyTargets.clear();
             NBTTagList targetList = compound.getTagList("targets", 10);
             for(int i = 0; i < targetList.tagCount(); i++){
                 NBTTagCompound targetCompound = targetList.getCompoundTagAt(i);

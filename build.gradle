@@ -7,14 +7,17 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven { url = "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.wynprice.cursemaven:CurseMaven:1.2.3'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.wynprice.cursemaven'
 
-version = "0.7"
+version = "0.8"
 group= "requious" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Requious Frakto"
 
@@ -55,13 +58,14 @@ repositories {
 }
 
 dependencies {
-    deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.19.548"
+    deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.576"
     deobfCompile "mezz.jei:jei_1.12.2:4.14.4.267"
     deobfCompile "net.industrial-craft:industrialcraft-2:2.8.170-ex112:api"
     deobfCompile "gregtechce:gregtech:1.12.2:1.8.4.419"
     deobfCompile ("appeng:appliedenergistics2:rv6-stable-6"){
         transitive = false
     }
+    deobfCompile curse.resolveUrl("https://www.curseforge.com/minecraft/mc-mods/mysticalmechanics/files/2869691")
     compile files('libs/')
 }
 

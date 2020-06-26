@@ -2,6 +2,7 @@ package requious.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import requious.Requious;
 import requious.gui.GaugeDirection;
@@ -133,15 +134,18 @@ public class SlotVisual {
             minecraft.getTextureManager().bindTexture(texture);
             GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 
-            int fillX = fill.getFill(width * 18, inverse);
-            int fillY = fill.getFill(height * 18, inverse);
-            int emptyX = width * 18 - fillX;
-            int emptyY = height * 18 - fillY;
+            int widthTotal = width * 18;
+            int heightTotal = height * 18;
+
+            int fillX = fill.getFill(widthTotal, inverse);
+            int fillY = fill.getFill(heightTotal, inverse);
+            int emptyX = widthTotal - fillX;
+            int emptyY = heightTotal - fillY;
 
             int ox = 0;
             int oy = 0;
-            int ow = width * 18;
-            int oh = height * 18;
+            int ow = widthTotal;
+            int oh = heightTotal;
 
             switch (direction) {
                 case UP:

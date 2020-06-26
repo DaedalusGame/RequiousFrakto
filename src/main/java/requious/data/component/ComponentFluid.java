@@ -152,7 +152,7 @@ public class ComponentFluid extends ComponentBase {
 
             if (!collectors.contains(fluid))
                 collectors.add(fluid);
-            if (!collectors.contains(item))
+            if (isBucketAccepted() && !collectors.contains(item))
                 collectors.add(item);
         }
 

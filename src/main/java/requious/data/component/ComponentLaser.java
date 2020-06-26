@@ -118,20 +118,25 @@ public class ComponentLaser extends ComponentBase {
             if(canOutput()) {
                 util.setTarget(component.areaStart, component.areaEnd);
                 util.setMultiTarget(component.minTargets, component.maxTargets);
-                if (util.failure()) {
-                    util.setDirty();
-                    currentFacing++;
-                } else if (util.success()) {
-                    if (util.foundNew())
-                        util.pickTarget();
+                if(util.hasTargets()) {
                     util.fire(emitAmount);
                     markDirty();
                     emitType = null;
                     emitAmount = 0;
-                    if(!util.hasMaxTargets())
-                        util.startSearch();
-                } else {
-                    util.next();
+                }
+                if (!world.isRemote) {
+                    if (util.failure()) {
+                        util.setDirty();
+                        currentFacing++;
+                    } else if (util.success()) {
+                        if (util.foundNew())
+                            util.pickTarget();
+                        markDirty();
+                        if (!util.hasMaxTargets())
+                            util.startSearch();
+                    } else {
+                        util.next();
+                    }
                 }
             }
         }
