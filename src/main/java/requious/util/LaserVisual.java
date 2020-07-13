@@ -9,6 +9,7 @@ import requious.particle.IParticleAnchor;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.function.Supplier;
 
 public abstract class LaserVisual {
@@ -126,6 +127,70 @@ public abstract class LaserVisual {
             compound.setFloat("thickness",thickness);
             compound.setFloat("wildness",wildness);
             compound.setInteger("segments",segments);
+            return compound;
+        }
+    }
+
+    public static class FireBeam extends LaserVisual {
+        Random random = new Random();
+
+        float size;
+        float wildness;
+        float length;
+        int time;
+        int amount;
+
+        public FireBeam() {
+            super("fire_beam");
+        }
+
+        public FireBeam(Color color, float size, float wildness, float length, int amount, int time) {
+            this();
+            this.color = color;
+            this.size = size;
+            this.wildness = wildness;
+            this.length = length;
+            this.time = time;
+            this.amount = amount;
+        }
+
+        @Override
+        public void render(World world, BlockPos emit, BlockPos target, int sent) {
+            double x1 = emit.getX() + 0.5;
+            double y1 = emit.getY() + 0.5;
+            double z1 = emit.getZ() + 0.5;
+
+            double dx = target.getX() + 0.5 - x1;
+            double dy = target.getY() + 0.5 - y1;
+            double dz = target.getZ() + 0.5 - z1;
+
+            for(int i = 0; i < amount; i++) {
+                double rx = (random.nextDouble() - 0.5) * 2 * wildness;
+                double ry = (random.nextDouble() - 0.5) * 2 * wildness;
+                double rz = (random.nextDouble() - 0.5) * 2 * wildness;
+
+                Requious.PROXY.emitGlow(world, IParticleAnchor.zero(), x1 + rx, y1 + ry, z1 + rz, dx * 2 * length / time, dy * 2 * length / time, dz * 2 * length / time, color, 0, size, time, 0);
+            }
+        }
+
+        @Override
+        public void readFromNBT(NBTTagCompound compound) {
+            super.readFromNBT(compound);
+            size = compound.getFloat("size");
+            wildness = compound.getFloat("wildness");
+            length = compound.getFloat("length");
+            amount = compound.getInteger("amount");
+            time = compound.getInteger("time");
+        }
+
+        @Override
+        public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+            compound = super.writeToNBT(compound);
+            compound.setFloat("size",size);
+            compound.setFloat("wildness",wildness);
+            compound.setFloat("length",length);
+            compound.setInteger("amount",amount);
+            compound.setInteger("time",time);
             return compound;
         }
     }

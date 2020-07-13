@@ -3,6 +3,7 @@ package requious.compat.crafttweaker;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.block.IBlock;
 import crafttweaker.api.block.IBlockState;
+import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
@@ -22,6 +23,7 @@ import requious.data.component.ComponentBase;
 import requious.data.component.ComponentEnergy;
 import requious.data.component.ComponentFluid;
 import requious.data.component.ComponentItem;
+import requious.tile.TileEntityAssembly;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -30,41 +32,45 @@ import stanhebben.zenscript.annotations.ZenMethod;
 @ZenClass("mods.requious.MachineContainer")
 public class MachineContainer {
     public AssemblyProcessor assembly;
-    public TileEntity tile;
-    public EnumFacing facing;
     public RandomCT random;
 
     public MachineContainer(AssemblyProcessor assembly) {
         this.assembly = assembly;
-        this.tile = assembly.getTile();
-        this.facing = assembly.getFacing();
         this.random = new RandomCT();
+    }
+
+    public TileEntity getTile() {
+        return assembly.getTile();
+    }
+
+    public EnumFacing getTileFacing() {
+        return assembly.getFacing();
     }
 
     @ZenGetter("world")
     public IWorld getWorld() {
-        return CraftTweakerMC.getIWorld(tile.getWorld());
+        return CraftTweakerMC.getIWorld(getTile().getWorld());
     }
 
     @ZenGetter("pos")
     public IBlockPos getPos() {
-        return CraftTweakerMC.getIBlockPos(tile.getPos());
+        return CraftTweakerMC.getIBlockPos(getTile().getPos());
     }
 
     @ZenGetter("block")
     public IBlock getBlock() {
-        BlockPos pos = tile.getPos();
-        return CraftTweakerMC.getBlock(tile.getWorld(), pos.getX(), pos.getY(), pos.getZ());
+        BlockPos pos = getTile().getPos();
+        return CraftTweakerMC.getBlock(getTile().getWorld(), pos.getX(), pos.getY(), pos.getZ());
     }
 
     @ZenGetter("state")
     public IBlockState getBlockState() {
-        return CraftTweakerMC.getBlockState(tile.getWorld().getBlockState(tile.getPos()));
+        return CraftTweakerMC.getBlockState(getTile().getWorld().getBlockState(getTile().getPos()));
     }
 
     @ZenGetter("facing")
     public IFacing getFacing() {
-        return CraftTweakerMC.getIFacing(facing);
+        return CraftTweakerMC.getIFacing(getTileFacing());
     }
 
     @ZenGetter("random")
@@ -219,5 +225,41 @@ public class MachineContainer {
         if (slot instanceof ComponentEnergy.Slot) {
             ((ComponentEnergy.Slot) slot).setAmount(amount);
         }
+    }
+
+    @ZenMethod
+    public IItemStack insertItem(String group, IItemStack stack) {
+        ItemStack remainder = assembly.insertItem(group, CraftTweakerMC.getItemStack(stack));
+        return CraftTweakerMC.getIItemStack(remainder);
+    }
+
+    @ZenMethod
+    public IItemStack extractItem(String group, IIngredient filter) {
+        ItemStack extracted = assembly.extractItem(group, stack -> filter.matches(CraftTweakerMC.getIItemStack(stack)), filter.getAmount());
+        return CraftTweakerMC.getIItemStack(extracted);
+    }
+
+    @ZenMethod
+    public ILiquidStack insertFluid(String group, ILiquidStack stack) {
+        FluidStack remainder = assembly.insertFluid(group, CraftTweakerMC.getLiquidStack(stack));
+        return CraftTweakerMC.getILiquidStack(remainder);
+    }
+
+    @ZenMethod
+    public ILiquidStack extractFluid(String group, IIngredient filter) {
+        FluidStack extracted = assembly.extractFluid(group, stack -> filter.matches(CraftTweakerMC.getILiquidStack(stack)), filter.getAmount());
+        return CraftTweakerMC.getILiquidStack(extracted);
+    }
+
+    @ZenMethod
+    public int insertEnergy(String group, int energy) {
+        int remainder = assembly.insertEnergy(group, energy);
+        return remainder;
+    }
+
+    @ZenMethod
+    public int extractEnergy(String group, int energy) {
+        int extracted = assembly.extractEnergy(group, energy);
+        return extracted;
     }
 }

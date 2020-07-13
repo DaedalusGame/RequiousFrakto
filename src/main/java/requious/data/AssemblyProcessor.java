@@ -2,6 +2,7 @@ package requious.data;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -13,11 +14,10 @@ import net.minecraftforge.fluids.FluidStack;
 import requious.compat.crafttweaker.IWorldFunction;
 import requious.compat.crafttweaker.MachineContainer;
 import requious.compat.crafttweaker.RecipeContainer;
-import requious.data.component.ComponentBase;
+import requious.data.component.*;
 import requious.data.component.ComponentBase.Collector;
 import requious.data.component.ComponentBase.Slot;
-import requious.data.component.ComponentEnergy;
-import requious.data.component.ComponentLaser;
+import requious.gui.slot.ItemSlot;
 import requious.recipe.AssemblyRecipe;
 import requious.recipe.ConsumptionResult;
 import requious.tile.TileEntityAssembly;
@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class AssemblyProcessor {
     AssemblyData data;
@@ -41,7 +42,6 @@ public class AssemblyProcessor {
     Map<String, Object> variables = new HashMap<>();
     Map<String, Object> variablesHistory = new HashMap<>();
     MachineContainer container;
-    int activeTime;
 
     public AssemblyProcessor(AssemblyData data) {
         this.data = data;
@@ -98,6 +98,83 @@ public class AssemblyProcessor {
     public void setCacheResult(String type, boolean result, long time) {
         CheckCache check = cache.computeIfAbsent(type, k -> new CheckCache());
         check.setResult(result, time);
+    }
+
+    public ItemStack insertItem(String group, ItemStack stack) {
+        for (Slot slot : getSlots()) {
+            if(slot instanceof ComponentItem.Slot && slot.isGroup(group)) {
+                ItemStack remainder = ((ComponentItem.Slot) slot).getItem().insert(stack, false);
+                if(remainder.getCount() < stack.getCount())
+                    return remainder;
+            }
+        }
+        return stack;
+    }
+
+    public ItemStack extractItem(String group, Predicate<ItemStack> filter, int n) {
+        for (Slot slot : getSlots()) {
+            if(slot instanceof ComponentItem.Slot && slot.isGroup(group)) {
+                ComponentItem.Slot itemSlot = (ComponentItem.Slot) slot;
+                ItemStack extracted = itemSlot.getItem().extract(n, true);
+                if(extracted.getCount() >= n && filter.test(extracted)) {
+                    itemSlot.getItem().extract(n, false);
+                    return extracted;
+                }
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    public FluidStack insertFluid(String group, FluidStack stack) {
+        for (Slot slot : getSlots()) {
+            if(slot instanceof ComponentFluid.Slot && slot.isGroup(group)) {
+                int filled = ((ComponentFluid.Slot) slot).fill(stack, false);
+                if(filled > 0) {
+                    stack.amount = Math.max(0, stack.amount - filled);
+                    if (stack.amount > 0)
+                        return stack;
+                    else
+                        return null;
+                }
+            }
+        }
+        return stack;
+    }
+
+    public FluidStack extractFluid(String group, Predicate<FluidStack> filter, int n) {
+        for (Slot slot : getSlots()) {
+            if(slot instanceof ComponentFluid.Slot && slot.isGroup(group)) {
+                ComponentFluid.Slot fluidSlot = (ComponentFluid.Slot) slot;
+                FluidStack extracted = fluidSlot.drain(n, true);
+                if(extracted != null && extracted.amount >= n && filter.test(extracted)) {
+                    fluidSlot.drain(n, false);
+                    return extracted;
+                }
+            }
+        }
+        return null;
+    }
+
+    public int insertEnergy(String group, int energy) {
+        for (Slot slot : getSlots()) {
+            if(slot instanceof ComponentEnergy.Slot && slot.isGroup(group)) {
+                int filled = ((ComponentEnergy.Slot) slot).receive(energy, false);
+                if(filled > 0)
+                    return energy - filled;
+            }
+        }
+        return energy;
+    }
+
+    public int extractEnergy(String group, int energy) {
+        for (Slot slot : getSlots()) {
+            if(slot instanceof ComponentEnergy.Slot && slot.isGroup(group)) {
+                int filled = ((ComponentEnergy.Slot) slot).extract(energy, false);
+                if(filled > 0)
+                    return filled;
+            }
+        }
+        return 0;
     }
 
     public Iterable<MachineVisual> getVisuals() {

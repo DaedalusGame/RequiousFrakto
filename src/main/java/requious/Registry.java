@@ -98,6 +98,7 @@ public class Registry {
 
         LaserVisual.register("beam", LaserVisual.Beam::new);
         LaserVisual.register("lightning", LaserVisual.Lightning::new);
+        LaserVisual.register("fire_beam", LaserVisual.FireBeam::new);
     }
 
     @SubscribeEvent

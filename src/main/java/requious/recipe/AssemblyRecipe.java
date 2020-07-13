@@ -117,7 +117,7 @@ public class AssemblyRecipe implements IRecipeWrapper {
 
     @ZenMethod
     public AssemblyRecipe requireRandomChance(String group, double chance, int interval) {
-        requirements.add(new RequirementWorld(group, container -> doesRandomApply(container.tile.getWorld(),interval,chance), 0));
+        requirements.add(new RequirementWorld(group, container -> doesRandomApply(container.getTile().getWorld(),interval,chance), 0));
         return this;
     }
 

@@ -38,4 +38,9 @@ public class LaserVisualCT {
         return new LaserVisualCT(new LaserVisual.Lightning(color,thickness,wildness,segments));
     }
 
+    @ZenMethod
+    public static LaserVisualCT fireBeam(int[] rgb, float size, float wildness, float length, int amount, int time) {
+        Color color = Misc.parseColor(rgb);
+        return new LaserVisualCT(new LaserVisual.FireBeam(color,size,wildness,length,amount,time));
+    }
 }
