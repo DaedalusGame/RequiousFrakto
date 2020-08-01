@@ -93,7 +93,7 @@ public class SelectSlot extends BaseSlot<ComponentSelection.Slot> {
     }
 
     @Override
-    public void click(ItemStack dragStack, int mouseButton, ClickType type) {
+    public void clientClick(EntityPlayer player, ItemStack dragStack, int mouseButton, ClickType type) {
         //System.out.println(type);
         if(type == ClickType.PICKUP) {
             if (mouseButton == 0)

@@ -118,7 +118,13 @@ public abstract class ComponentBase {
             return null;
         }
 
-        public abstract void update();
+        public void update() {
+            //NOOP
+        }
+
+        public void updatePost(boolean recipeCrafted) {
+            //NOOP
+        }
 
         @Override
         public boolean equals(Object obj) {

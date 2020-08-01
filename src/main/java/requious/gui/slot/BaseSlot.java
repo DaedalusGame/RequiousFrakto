@@ -1,7 +1,8 @@
 package requious.gui.slot;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
@@ -45,16 +46,20 @@ public abstract class BaseSlot<T extends ComponentBase.Slot> extends Slot {
     @SideOnly(Side.CLIENT)
     public abstract void renderForeground(GuiAssembly assembly, int x, int y, int mousex, int mousey);
 
-    public void serverScroll(int i) {
-
-    }
-
-    public void click(ItemStack dragStack, int mouseButton, ClickType type) {
-
-    }
-
     public void clientScroll(int i) {
+        //NOOP
+    }
 
+    public void serverScroll(int i) {
+        //NOOP
+    }
+
+    public void clientClick(EntityPlayer player, ItemStack dragStack, int mouseButton, ClickType type) {
+        //NOOP
+    }
+
+    public void serverClick(EntityPlayerMP player, ItemStack dragStack, int mouseButton, ClickType clickType) {
+        //NOOP
     }
 
     public boolean hasToolTip() {

@@ -17,11 +17,13 @@ import requious.gui.slot.BaseSlot;
 import javax.annotation.Nullable;
 
 public class ContainerAssembly extends Container {
+    public EntityPlayer player;
     private AssemblyProcessor processor;
     int machineSlots;
 
     public ContainerAssembly(EntityPlayer player, AssemblyProcessor processor) {
         this.processor = processor;
+        this.player = player;
 
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 5; y++) {

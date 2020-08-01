@@ -1,24 +1,36 @@
 package requious.gui.slot;
 
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentFluid;
 import requious.gui.GuiAssembly;
+import requious.network.PacketHandler;
+import requious.network.message.MessageClickSlot;
 import requious.util.Fill;
 import requious.util.SlotVisual;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,12 +47,12 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
     @Override
     @Nonnull
     public ItemStack getStack() {
-        return binding.getItem().getStack();
+        return ItemStack.EMPTY;
     }
 
     @Override
     public void putStack(ItemStack stack) {
-        binding.getItem().setStack(stack);
+        //binding.getItem().setStack(stack);
         this.onSlotChanged();
     }
 
@@ -56,21 +68,23 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        if(!binding.canPut())
-            return binding.getItem().getAmount();
-        return binding.getItem().getCapacity();
+        return 0;
+        //if(!binding.canPut())
+        //    return binding.getItem().getAmount();
+        //return binding.getItem().getCapacity();
     }
 
     @Override
     public boolean canTakeStack(EntityPlayer playerIn) {
-        if(!binding.canTake())
-            return false;
-        return !binding.getItem().extract(1, true).isEmpty();
+        return false;
+        //if(!binding.canTake())
+        //    return false;
+        //return !binding.getItem().extract(1, true).isEmpty();
     }
 
     @Override
     public void incrStack(int n) {
-        binding.getItem().insert(n,false);
+        //binding.getItem().insert(n,false);
     }
 
     @Override
@@ -112,6 +126,9 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
             double xCoord = x;
             double yCoord = y + heightIn - heightLevel;
 
+            Color color = new Color(contents.getFluid().getColor(contents));
+            GlStateManager.color(color.getRed() / 255f,color.getGreen() / 255f,color.getBlue() / 255f,color.getAlpha() / 255f);
+
             bufferbuilder.pos(xCoord + 0, yCoord + heightLevel, (double)zLevel).tex((double)textureSprite.getMinU(), v).endVertex();
             bufferbuilder.pos(xCoord + widthIn, yCoord + heightLevel, (double)zLevel).tex((double)textureSprite.getMaxU(), v).endVertex();
             bufferbuilder.pos(xCoord + widthIn, yCoord + 0, (double)zLevel).tex((double)textureSprite.getMaxU(), (double)textureSprite.getMinV()).endVertex();
@@ -124,7 +141,8 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
 
     @Override
     public ItemStack decrStackSize(int amount) {
-        return binding.getItem().extract(amount,false);
+        return ItemStack.EMPTY;
+        //return binding.getItem().extract(amount,false);
     }
 
     @Override
@@ -164,11 +182,91 @@ public class FluidSlot extends BaseSlot<ComponentFluid.Slot> {
 
     @Override
     public boolean canShiftPut() {
-        return super.canShiftPut() && binding.canPut();
+        return false;
     }
 
     @Override
     public boolean canShiftTake() {
-        return super.canShiftTake() && binding.canTake();
+        return false;
+    }
+
+    @Override
+    public void clientClick(EntityPlayer player, ItemStack dragStack, int mouseButton, ClickType clickType) {
+        PacketHandler.INSTANCE.sendToServer(new MessageClickSlot(slotNumber, dragStack, mouseButton, clickType));
+
+        ItemStack actualStack = player.inventory.getItemStack();
+        if (!actualStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
+            return;
+        if(clickType == ClickType.PICKUP) {
+            handleFluidItem(player, actualStack);
+        }
+    }
+
+    @Override
+    public void serverClick(EntityPlayerMP player, ItemStack dragStack, int mouseButton, ClickType clickType) {
+        ItemStack actualStack = player.inventory.getItemStack();
+        if (!actualStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
+            return;
+        if(clickType == ClickType.PICKUP) {
+            handleFluidItem(player, actualStack);
+        }
+    }
+
+    private void handleFluidItem(EntityPlayer player, ItemStack actualStack) {
+        SlotFluidHandler handler = new SlotFluidHandler();
+        if(binding.canTake() && binding.getAmount() > 0) { //Empty
+            FluidActionResult result = FluidUtil.tryFillContainer(actualStack, handler, Integer.MAX_VALUE, player, false);
+            if(result.isSuccess()) {
+                ItemStack resultStack = result.getResult();
+                returnItem(player, resultStack);
+                FluidUtil.tryFillContainer(actualStack, handler, Integer.MAX_VALUE, player, true);
+                actualStack.shrink(1);
+                player.inventory.setItemStack(actualStack);
+                return;
+            }
+        }
+
+        if(binding.canPut()) { //Fill
+            FluidActionResult result = FluidUtil.tryEmptyContainer(actualStack, handler, Integer.MAX_VALUE, player, false);
+            if(result.isSuccess()) {
+                ItemStack resultStack = result.getResult();
+                returnItem(player, resultStack);
+                FluidUtil.tryEmptyContainer(actualStack, handler, Integer.MAX_VALUE, player, true);
+                actualStack.shrink(1);
+                player.inventory.setItemStack(actualStack);
+                return;
+            }
+        }
+    }
+
+    private void returnItem(EntityPlayer player, ItemStack resultStack) {
+        boolean added = player.inventory.addItemStackToInventory(resultStack);
+        if(!added) {
+            player.world.spawnEntity(new EntityItem(player.world, player.posX, player.posY + (double)(player.height / 2.0F), player.posZ, resultStack));
+        }
+    }
+
+    public class SlotFluidHandler implements IFluidHandler {
+        @Override
+        public IFluidTankProperties[] getTankProperties() {
+            return new IFluidTankProperties[] { binding };
+        }
+
+        @Override
+        public int fill(FluidStack resource, boolean doFill) {
+            return binding.fill(resource, !doFill);
+        }
+
+        @Nullable
+        @Override
+        public FluidStack drain(FluidStack resource, boolean doDrain) {
+            return binding.drain(resource, !doDrain);
+        }
+
+        @Nullable
+        @Override
+        public FluidStack drain(int maxDrain, boolean doDrain) {
+            return binding.drain(maxDrain, !doDrain);
+        }
     }
 }

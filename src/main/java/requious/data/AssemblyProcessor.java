@@ -354,19 +354,23 @@ public class AssemblyProcessor {
         for (Collector collector : collectors) {
             collector.update();
         }
+        boolean recipeCrafted = false;
         for(List<AssemblyRecipe> recipes : data.recipes.values()) {
             for (AssemblyRecipe recipe : recipes) {
                 RecipeContainer container = new RecipeContainer(this.container);
                 List<ConsumptionResult> results = recipe.matches(this, container);
-                if (results != null) {
+                if (results != null && !recipeCrafted) {
                     recipe.calculate(container);
                     if (recipe.fitsResults(this, container)) {
                         recipe.consumeRequirements(results);
                         recipe.produceResults(this, container);
-                        break;
+                        recipeCrafted = true;
                     }
                 }
             }
+        }
+        for (Collector collector : collectors) {
+            collector.updatePost(recipeCrafted);
         }
     }
 

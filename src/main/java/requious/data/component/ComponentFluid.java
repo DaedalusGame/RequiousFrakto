@@ -131,7 +131,7 @@ public class ComponentFluid extends ComponentBase {
         return this;
     }
 
-    public static class Slot extends ComponentBase.Slot<ComponentFluid> implements IFluidTankProperties, ComponentItem.IItemSlot {
+    public static class Slot extends ComponentBase.Slot<ComponentFluid> implements IFluidTankProperties {
         FluidStack fluid;
         ItemComponentHelper bucket;
 
@@ -191,7 +191,7 @@ public class ComponentFluid extends ComponentBase {
             fluid = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag("fluid"));
         }
 
-        @Override
+        /*@Override
         public boolean canInputItem() {
             return component.bucketAllowed;
         }
@@ -199,7 +199,7 @@ public class ComponentFluid extends ComponentBase {
         @Override
         public boolean canOutputItem() {
             return component.bucketAllowed;
-        }
+        }*/
 
         public boolean canInput() {
             return component.inputAllowed;
@@ -217,7 +217,6 @@ public class ComponentFluid extends ComponentBase {
             return component.pushItem;
         }
 
-        @Override
         public boolean canSplit() {
             return component.splitAllowed;
         }
@@ -227,7 +226,7 @@ public class ComponentFluid extends ComponentBase {
         }
 
         public boolean canTake() {
-            return !component.hidden && component.takeAllowed;
+            return !component.hidden && component.bucketAllowed && component.takeAllowed;
         }
 
         public boolean canOverfill() {
@@ -238,9 +237,9 @@ public class ComponentFluid extends ComponentBase {
             return component.bucketAllowed;
         }
 
-        public ItemComponentHelper getItem() {
+        /*public ItemComponentHelper getItem() {
             return bucket;
-        }
+        }*/
 
         @Nullable
         @Override
@@ -272,7 +271,7 @@ public class ComponentFluid extends ComponentBase {
 
         @Override
         public boolean canDrain() {
-            return canOutputItem();
+            return canOutput();
         }
 
         @Override
@@ -282,7 +281,7 @@ public class ComponentFluid extends ComponentBase {
 
         @Override
         public boolean canDrainFluidType(FluidStack fluidStack) {
-            return canOutputItem() && true;
+            return canOutput() && true;
         }
 
         public int fill(FluidStack resource, boolean simulate) {
@@ -309,6 +308,8 @@ public class ComponentFluid extends ComponentBase {
         }
 
         public FluidStack drain(int amount, boolean simulate) {
+            if(fluid == null)
+                return null;
             FluidStack copy = fluid.copy();
             copy.amount = Math.min(amount, getAmount());
             if (!simulate) {
@@ -455,7 +456,7 @@ public class ComponentFluid extends ComponentBase {
         @Override
         public FluidStack drain(FluidStack resource, boolean doDrain) {
             for (Slot slot : slots) {
-                if (!slot.canOutputItem())
+                if (!slot.canOutput())
                     continue;
                 FluidStack extracted = slot.drain(resource, !doDrain);
                 if (extracted != null)
@@ -468,7 +469,7 @@ public class ComponentFluid extends ComponentBase {
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
             for (Slot slot : slots) {
-                if (!slot.canOutputItem())
+                if (!slot.canOutput())
                     continue;
                 FluidStack extracted = slot.drain(maxDrain, !doDrain);
                 if (extracted != null)

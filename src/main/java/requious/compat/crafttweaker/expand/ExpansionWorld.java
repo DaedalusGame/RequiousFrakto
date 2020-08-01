@@ -21,7 +21,7 @@ import stanhebben.zenscript.annotations.ZenMethod;
 @ZenRegister
 public class ExpansionWorld {
     @ZenMethod
-    public MachineContainer getMachine(IWorld iworld, IBlockPos ipos) {
+    public static MachineContainer getMachine(IWorld iworld, IBlockPos ipos) {
         World world = CraftTweakerMC.getWorld(iworld);
         BlockPos pos = CraftTweakerMC.getBlockPos(ipos);
 

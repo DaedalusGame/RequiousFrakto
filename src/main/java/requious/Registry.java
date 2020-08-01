@@ -9,10 +9,12 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -23,7 +25,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -42,10 +46,8 @@ import requious.entity.EntitySpark;
 import requious.entity.spark.TargetTile;
 import requious.entity.spark.ValueFluid;
 import requious.entity.spark.ValueForgeEnergy;
-import requious.item.IDynamicItemModel;
-import requious.item.ItemBattery;
-import requious.item.ItemFluidCell;
-import requious.item.ItemTuningFork;
+import requious.item.*;
+import requious.model.ModelShape;
 import requious.tile.TileEntityAssembly;
 import requious.tile.TileEntityAssemblyRenderer;
 import requious.util.AABBTypeAdapter;
@@ -77,6 +79,8 @@ public class Registry {
 
     @GameRegistry.ObjectHolder("requious:tuning_fork")
     public static Item TUNING_FORK;
+    @GameRegistry.ObjectHolder("requious:shape")
+    public static ItemShape SHAPE;
 
     public static AssemblyData getAssemblyData(String name) {
         return ASSEMBLY_DATA.stream().filter(data -> data.resourceName.equals(name)).findFirst().orElse(null);
@@ -181,6 +185,7 @@ public class Registry {
         }
 
         event.getRegistry().register(TUNING_FORK = new ItemTuningFork().setRegistryName(new ResourceLocation(Requious.MODID, "tuning_fork")).setUnlocalizedName("tuning_fork").setCreativeTab(CreativeTabs.REDSTONE));
+        event.getRegistry().register(SHAPE = (ItemShape) new ItemShape().setRegistryName(new ResourceLocation(Requious.MODID, "shape")).setUnlocalizedName("shape").setCreativeTab(CreativeTabs.REDSTONE));
     }
 
     @SideOnly(Side.CLIENT)
@@ -217,6 +222,23 @@ public class Registry {
         }
 
         registerItemModel(TUNING_FORK, 0, "inventory");
+
+        ModelLoaderRegistry.registerLoader(new ModelShape.Loader(new ResourceLocation(Requious.MODID, "shape_custom")));
+
+        ModelResourceLocation toolShardLocation = new ModelResourceLocation(SHAPE.getRegistryName(), "inventory");
+        ModelLoader.setCustomMeshDefinition(SHAPE, stack -> toolShardLocation);
+        ModelBakery.registerItemVariants(SHAPE, toolShardLocation);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onTextureStitch(TextureStitchEvent event) {
+        TextureMap map = event.getMap();
+        map.registerSprite(new ResourceLocation(Requious.MODID,"items/shape_circle"));
+        map.registerSprite(new ResourceLocation(Requious.MODID,"items/shape_star"));
+        map.registerSprite(new ResourceLocation(Requious.MODID,"items/shape_square"));
+        map.registerSprite(new ResourceLocation(Requious.MODID,"items/shape_sideways"));
+        map.registerSprite(new ResourceLocation(Requious.MODID,"items/shape_windmill"));
     }
 
     private static int colorMultiplierDynamicBlock(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {

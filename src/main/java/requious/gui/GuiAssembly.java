@@ -24,11 +24,13 @@ import java.util.List;
 public class GuiAssembly extends GuiContainer {
     private static final ResourceLocation boxGuiLocation = new ResourceLocation(Requious.MODID, "textures/gui/assembly.png");
     private AssemblyProcessor assembly;
+    private EntityPlayer player;
 
     public GuiAssembly(EntityPlayer player, AssemblyProcessor assembly) {
         super(new ContainerAssembly(player, assembly));
         this.ySize = 184;
         this.assembly = assembly;
+        this.player = player;
     }
 
     @Override
@@ -197,7 +199,7 @@ public class GuiAssembly extends GuiContainer {
         super.handleMouseClick(slotIn, slotId, mouseButton, type);
 
         if (slotIn instanceof BaseSlot) {
-            ((BaseSlot) slotIn).click(draggedStack, mouseButton, type);
+            ((BaseSlot) slotIn).clientClick(player, draggedStack, mouseButton, type);
         }
     }
 

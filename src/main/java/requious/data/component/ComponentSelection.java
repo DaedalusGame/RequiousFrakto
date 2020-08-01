@@ -185,7 +185,7 @@ public class ComponentSelection extends ComponentBase {
 
         @Override
         public boolean accept(ComponentBase.Slot slot) {
-            if(slot instanceof Slot && ((Slot)slot).getSelectionGroup() == selectionGroup) {
+            if(slot instanceof Slot && selectionGroup.equals(((Slot) slot).getSelectionGroup())) {
                 addSlot((Slot) slot);
                 return true;
             }
