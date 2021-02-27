@@ -1,6 +1,7 @@
 package requious.data.component;
 
 import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -13,6 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import requious.compat.crafttweaker.IFluidCondition;
 import requious.compat.crafttweaker.SlotVisualCT;
 import requious.data.AssemblyProcessor;
 import requious.gui.slot.FluidSlot;
@@ -43,6 +45,7 @@ public class ComponentFluid extends ComponentBase {
     public boolean canOverfill = false;
     public IOParameters pushFluid = new IOParameters();
     public IOParameters pushItem = new IOParameters();
+    public IFluidCondition filter;
     public int capacity;
 
     public SlotVisual foreground = SlotVisual.EMPTY;
@@ -63,6 +66,13 @@ public class ComponentFluid extends ComponentBase {
     public ComponentFluid setAccess(boolean input, boolean output) {
         inputAllowed = input;
         outputAllowed = output;
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentFluid setFilter(IFluidCondition condition) {
+        filter = condition;
         return this;
     }
 
@@ -284,6 +294,10 @@ public class ComponentFluid extends ComponentBase {
             return canOutput() && true;
         }
 
+        public boolean acceptsFluid(FluidStack resource) {
+            return component.filter == null || component.filter.matches(CraftTweakerMC.getILiquidStack(resource));
+        }
+
         public int fill(FluidStack resource, boolean simulate) {
             if (resource == null || (fluid != null && !fluid.isFluidEqual(resource))) {
                 return 0;
@@ -443,7 +457,7 @@ public class ComponentFluid extends ComponentBase {
         public int fill(FluidStack resource, boolean doFill) {
             boolean hasFluidStored = hasFluidStored(resource);
             for (Slot slot : slots) {
-                if (slot.canInput() && (slot.canSplit() || !hasFluidStored || (slot.fluid != null && slot.fluid.isFluidEqual(resource)))) {
+                if (slot.canInput() && slot.acceptsFluid(resource) && (slot.canSplit() || !hasFluidStored || (slot.fluid != null && slot.fluid.isFluidEqual(resource)))) {
                     int filled = slot.fill(resource, !doFill);
                     if (filled > 0)
                         return filled;

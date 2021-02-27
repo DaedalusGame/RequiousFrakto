@@ -1,8 +1,11 @@
 package requious.data.component;
 
 import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.item.IIngredient;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import ic2.api.energy.EnergyNet;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -41,6 +44,7 @@ public class ComponentEnergy extends ComponentBase {
     public boolean takeAllowed = true;
     public boolean dropsOnBreak = true;
     public boolean canOverfill = false;
+    public Ingredient filter = new IngredientAny();
     public IOParameters pushItem = new IOParameters();
     public IOParameters pushEnergy = new IOParameters();
     public int capacity;
@@ -79,12 +83,14 @@ public class ComponentEnergy extends ComponentBase {
 
     @ReturnsSelf
     @ZenMethod
-    public ComponentEnergy allowBattery(boolean input, boolean output, @Optional(valueBoolean = true) boolean drops, @Optional(valueBoolean = true) boolean shift) {
+    public ComponentEnergy allowBattery(boolean input, boolean output, @Optional(valueBoolean = true) boolean drops, @Optional(valueBoolean = true) boolean shift, @Optional IIngredient ingredient) {
         batteryAllowed = true;
         putAllowed = input;
         takeAllowed = output;
         dropsOnBreak = drops;
         shiftAllowed = shift;
+        if(ingredient != null)
+            filter = CraftTweakerMC.getIngredient(ingredient);
         return this;
     }
 
@@ -271,6 +277,11 @@ public class ComponentEnergy extends ComponentBase {
             energy = compound.getInteger("energy");
             powerLoss = compound.getFloat("loss");
             battery.readFromNBT(compound.getCompoundTag("battery"));
+        }
+
+        @Override
+        public boolean acceptsItem(ItemStack stack) {
+            return component.filter.apply(stack);
         }
 
         @Override

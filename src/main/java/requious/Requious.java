@@ -21,7 +21,7 @@ import requious.tile.TileEntityRedEmitter;
 
 import java.io.File;
 
-@Mod(modid = Requious.MODID, name = Requious.MODNAME, acceptedMinecraftVersions = "[1.12, 1.13)", clientSideOnly = true)
+@Mod(modid = Requious.MODID, name = Requious.MODNAME, acceptedMinecraftVersions = "[1.12, 1.13)")
 @Mod.EventBusSubscriber
 public class Requious
 {

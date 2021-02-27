@@ -15,12 +15,13 @@ import requious.Requious;
 import requious.compat.jei.ingredient.*;
 import requious.compat.jei.slot.*;
 import requious.data.AssemblyData;
+import requious.recipe.AssemblyJEIWrapper;
 import requious.recipe.AssemblyRecipe;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class AssemblyCategory implements IRecipeCategory<AssemblyRecipe> {
+public class AssemblyCategory implements IRecipeCategory<AssemblyJEIWrapper> {
 
     @Nonnull
     private final String uid;
@@ -63,7 +64,7 @@ public class AssemblyCategory implements IRecipeCategory<AssemblyRecipe> {
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, AssemblyRecipe recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, AssemblyJEIWrapper recipeWrapper, IIngredients ingredients) {
         IGuiItemStackGroup items = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluids = recipeLayout.getFluidStacks();
         IGuiIngredientGroup<Energy> energies = recipeLayout.getIngredientsGroup(IngredientTypes.ENERGY);
@@ -76,8 +77,8 @@ public class AssemblyCategory implements IRecipeCategory<AssemblyRecipe> {
         int l = 0;
         int m = 0;
 
-        recipeWrapper.generateJEI();
-        for (JEISlot slot : recipeWrapper.jeiSlots) {
+        recipeWrapper.recipe.generateJEI();
+        for (JEISlot slot : recipeWrapper.recipe.jeiSlots) {
             if(slot instanceof ItemSlot) {
                 items.init(i,slot.isInput(), stackRenderer,slot.x * 18, slot.y * 18, GuiItemStackGroup.getWidth(1), GuiItemStackGroup.getHeight(1), 1, 1);
                 items.set(i, ((ItemSlot) slot).items);

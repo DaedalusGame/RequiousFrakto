@@ -9,6 +9,7 @@ import requious.compat.jei.ingredient.*;
 import requious.data.AssemblyData;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @JEIPlugin
 public class Plugin implements IModPlugin {
@@ -39,7 +40,7 @@ public class Plugin implements IModPlugin {
 
         for (AssemblyData assembly : Registry.ASSEMBLY_DATA) {
             if(assembly.hasJEIRecipes()) {
-                reg.addRecipes(assembly.jeiRecipes, "requious." + assembly.resourceName);
+                reg.addRecipes(assembly.getJeiWrappers(), "requious." + assembly.resourceName);
                 //reg.addRecipeCatalyst(new ItemStack(assembly.getBlock()), "requious." + assembly.resourceName);
                 for (ItemStack catalyst : assembly.getJEICatalysts()) {
                     reg.addRecipeCatalyst(catalyst, "requious." + assembly.resourceName);

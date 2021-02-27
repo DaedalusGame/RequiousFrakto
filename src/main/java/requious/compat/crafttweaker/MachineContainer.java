@@ -3,34 +3,37 @@ package requious.compat.crafttweaker;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.block.IBlock;
 import crafttweaker.api.block.IBlockState;
+import crafttweaker.api.command.ICommandManager;
+import crafttweaker.api.command.ICommandSender;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
+import crafttweaker.api.server.IServer;
 import crafttweaker.api.world.IBlockPos;
 import crafttweaker.api.world.IFacing;
 import crafttweaker.api.world.IVector3d;
 import crafttweaker.api.world.IWorld;
-import crafttweaker.mc1120.world.MCVector3d;
+import crafttweaker.mc1120.server.MCServer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
 import requious.data.AssemblyProcessor;
 import requious.data.component.ComponentBase;
 import requious.data.component.ComponentEnergy;
 import requious.data.component.ComponentFluid;
 import requious.data.component.ComponentItem;
-import requious.tile.TileEntityAssembly;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenRegister
 @ZenClass("mods.requious.MachineContainer")
-public class MachineContainer {
+public class MachineContainer implements ICommandSender {
     public AssemblyProcessor assembly;
     public RandomCT random;
 
@@ -47,9 +50,34 @@ public class MachineContainer {
         return assembly.getFacing();
     }
 
+    @Override
+    public String getDisplayName() {
+        return assembly.getCommandSender().getName();
+    }
+
+    @Override
+    public IBlockPos getPosition() {
+        return CraftTweakerMC.getIBlockPos(assembly.getCommandSender().getPosition());
+    }
+
     @ZenGetter("world")
     public IWorld getWorld() {
         return CraftTweakerMC.getIWorld(getTile().getWorld());
+    }
+
+    @Override
+    public IServer getServer() {
+        return new MCServer(assembly.getCommandSender().getServer());
+    }
+
+    @Override
+    public void sendMessage(String text) {
+        assembly.getCommandSender().sendMessage(new TextComponentString(text));
+    }
+
+    @Override
+    public Object getInternal() {
+        return assembly.getCommandSender();
     }
 
     @ZenGetter("pos")

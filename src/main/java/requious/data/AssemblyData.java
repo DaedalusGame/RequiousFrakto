@@ -15,6 +15,7 @@ import requious.compat.crafttweaker.SlotVisualCT;
 import requious.compat.jei.JEISlot;
 import requious.compat.jei.slot.*;
 import requious.data.component.*;
+import requious.recipe.AssemblyJEIWrapper;
 import requious.recipe.AssemblyRecipe;
 import requious.util.LayerType;
 import requious.util.MachineVisual;
@@ -23,10 +24,8 @@ import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @ZenRegister
 @ZenClass("mods.requious.Assembly")
@@ -57,6 +56,10 @@ public class AssemblyData extends BaseData {
         processor.setComponent(slots);
         processor.setup();
         return processor;
+    }
+    
+    public Collection<AssemblyJEIWrapper> getJeiWrappers() {
+        return jeiRecipes.stream().map(AssemblyJEIWrapper::new).collect(Collectors.toList());
     }
 
     public void setBlock(BlockAssembly block) {

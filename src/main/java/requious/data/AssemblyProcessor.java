@@ -23,6 +23,7 @@ import requious.recipe.ConsumptionResult;
 import requious.tile.TileEntityAssembly;
 import requious.util.CheckCache;
 import requious.util.ILaserStorage;
+import requious.util.MachineCommandSender;
 import requious.util.MachineVisual;
 
 import javax.annotation.Nonnull;
@@ -42,14 +43,20 @@ public class AssemblyProcessor {
     Map<String, Object> variables = new HashMap<>();
     Map<String, Object> variablesHistory = new HashMap<>();
     MachineContainer container;
+    MachineCommandSender commandSender;
 
     public AssemblyProcessor(AssemblyData data) {
         this.data = data;
         container = new MachineContainer(this);
+        commandSender = new MachineCommandSender(this);
     }
 
     public boolean isActive() {
         return container.getInteger("active") > 0;
+    }
+
+    public MachineCommandSender getCommandSender() {
+        return commandSender;
     }
 
     public TileEntity getTile() {
@@ -66,6 +73,14 @@ public class AssemblyProcessor {
         setVariable("owner", player.getName());
         setVariable("ownerUUID", player.getGameProfile().getId().toString());
         tile.markDirty();
+    }
+
+    public String getCommandName() {
+        Object commandName = getVariable("commandName");
+        if(commandName != null)
+            return commandName.toString();
+        else
+            return "@";
     }
 
     public Object getVariable(String name) {
@@ -321,6 +336,7 @@ public class AssemblyProcessor {
         for (Collector collector : collectors) {
             collector.setTile(tile);
         }
+        setVariable("commandName", "@");
     }
 
     public Slot getSlot(int x, int y) {

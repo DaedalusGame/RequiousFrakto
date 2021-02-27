@@ -1,7 +1,10 @@
 package requious.data.component;
 
 import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.item.IIngredient;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -15,10 +18,7 @@ import requious.compat.crafttweaker.SlotVisualCT;
 import requious.data.AssemblyProcessor;
 import requious.gui.slot.ItemSlot;
 import requious.tile.TileEntityAssembly;
-import requious.util.ComponentFace;
-import requious.util.IOParameters;
-import requious.util.ItemComponentHelper;
-import requious.util.SlotVisual;
+import requious.util.*;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ReturnsSelf;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -40,12 +40,12 @@ public class ComponentItem extends ComponentBase {
     public boolean dropsOnBreak = true;
     public boolean canOverfill = false;
     public boolean splitAllowed = false;
+    public Ingredient filter = new IngredientAny();
     public IOParameters pushItem = new IOParameters();
     public int capacity;
 
     public SlotVisual background = SlotVisual.ITEM_SLOT;
     public SlotVisual foreground = SlotVisual.EMPTY;
-
 
     public ComponentItem(ComponentFace face, int capacity) {
         super(face);
@@ -76,8 +76,22 @@ public class ComponentItem extends ComponentBase {
 
     @ReturnsSelf
     @ZenMethod
+    public ComponentItem setFilter(IIngredient ingredient) {
+        filter = CraftTweakerMC.getIngredient(ingredient);
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
     public ComponentItem allowOverfill() {
         this.canOverfill = true;
+        return this;
+    }
+
+    @ReturnsSelf
+    @ZenMethod
+    public ComponentItem allowSplit() {
+        this.splitAllowed = true;
         return this;
     }
 
@@ -173,6 +187,10 @@ public class ComponentItem extends ComponentBase {
             return item;
         }
 
+        public boolean acceptsItem(ItemStack stack) {
+            return component.filter.apply(stack);
+        }
+
         public boolean canInputItem() {
             return component.inputAllowed;
         }
@@ -236,6 +254,8 @@ public class ComponentItem extends ComponentBase {
         IOParameters getPushItem();
 
         boolean canSplit();
+
+        boolean acceptsItem(ItemStack stack);
     }
 
     public static class Collector extends ComponentBase.Collector implements IItemHandler {
@@ -347,7 +367,7 @@ public class ComponentItem extends ComponentBase {
         @Override
         public ItemStack insertItem(int i, @Nonnull ItemStack stack, boolean simulate) {
             IItemSlot slot = slots.get(i);
-            if(slot.canInputItem() && (slot.canSplit() || (!slot.getItem().isEmpty() && slot.getItem().canStack(stack)) || !hasItemStored(stack)))
+            if(slot.canInputItem() && slot.acceptsItem(stack) && (slot.canSplit() || (!slot.getItem().isEmpty() && slot.getItem().canStack(stack)) || !hasItemStored(stack)))
                 return slot.getItem().insert(stack,simulate);
             else
                 return stack;

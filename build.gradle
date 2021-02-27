@@ -17,7 +17,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.wynprice.cursemaven'
 
-version = "0.10"
+version = "0.12"
 group= "requious" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Requious Frakto"
 
@@ -65,7 +65,7 @@ dependencies {
     deobfCompile ("appeng:appliedenergistics2:rv6-stable-6"){
         transitive = false
     }
-    deobfCompile curse.resolveUrl("https://www.curseforge.com/minecraft/mc-mods/mysticalmechanics/files/2869691")
+    deobfCompile curse.resolveUrl("https://www.curseforge.com/minecraft/mc-mods/mysticalmechanics/files/3006392")
     compile files('libs/')
 }
 

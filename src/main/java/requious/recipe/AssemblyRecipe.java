@@ -5,15 +5,10 @@ import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.world.World;
 import requious.compat.crafttweaker.IWorldFunction;
 import requious.compat.crafttweaker.RecipeContainer;
 import requious.compat.crafttweaker.SlotVisualCT;
-import requious.compat.jei.IngredientCollector;
 import requious.compat.jei.JEISlot;
 import requious.data.AssemblyData;
 import requious.data.AssemblyProcessor;
@@ -29,10 +24,9 @@ import java.util.Random;
 
 @ZenRegister
 @ZenClass("mods.requious.AssemblyRecipe")
-public class AssemblyRecipe implements IRecipeWrapper {
+public class AssemblyRecipe {
     List<RequirementBase> requirements = new ArrayList<>();
     IRecipeFunction function;
-    int duration;
 
     boolean jeiGenerated;
     AssemblyData jeiCategory;
@@ -223,16 +217,6 @@ public class AssemblyRecipe implements IRecipeWrapper {
         function.calculate(container);
     }
 
-    @Override
-    public void getIngredients(IIngredients ingredients) {
-        generateJEI();
-        IngredientCollector collector = new IngredientCollector();
-        for(JEISlot slot : jeiSlots) {
-            slot.getIngredients(collector);
-        }
-        collector.collect(ingredients); //Possibly cache since it doesn't change ever.
-    }
-
     public void setJEICategory(AssemblyData assembly) {
         jeiCategory = assembly;
     }
@@ -262,23 +246,7 @@ public class AssemblyRecipe implements IRecipeWrapper {
         }
     }
 
-    @Override
-    public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        for (JEISlot slot : jeiSlots) {
-            slot.render(minecraft,recipeWidth,recipeHeight,mouseX,mouseY);
-        }
-    }
 
-    @Override
-    public List<String> getTooltipStrings(int mouseX, int mouseY) {
-        ITooltipFlag.TooltipFlags tooltipFlag = Minecraft.getMinecraft().gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
-        List<String> tooltip = new ArrayList<>();
-        for (JEISlot slot : jeiSlots) {
-            if(mouseX >= slot.x*18 && mouseY >= slot.y*18 && mouseX < slot.x*18+18 && mouseY < slot.y*18+18)
-                slot.getTooltip(tooltip,tooltipFlag);
-        }
-        return tooltip;
-    }
 
     public boolean hasJEICategory() {
         return jeiCategory != null;
